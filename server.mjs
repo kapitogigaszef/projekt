@@ -406,7 +406,7 @@ export async function createAppServer({
           return;
         }
         const [kills, deaths, assists, adr, headshots = 0] = body.stats[name].map(Number);
-        if (![kills, deaths, assists, headshots].every(value => validNumber(value, 1000)) || !Number.isFinite(adr) || adr < 0 || adr > 250 || headshots > 100) {
+        if (![kills, deaths, assists, headshots].every(value => validNumber(value, 1000)) || !Number.isFinite(adr) || adr < 0 || headshots > 100) {
           json(res, 400, { error: `Nieprawidłowe statystyki zawodnika ${name}.` });
           return;
         }

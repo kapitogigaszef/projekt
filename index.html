@@ -995,7 +995,7 @@
       const modal = document.getElementById("admin-modal");
       const today = new Date().toISOString().slice(0, 10);
       const mapOptions = ["Ancient", "Anubis", "Dust2", "Inferno", "Mirage", "Nuke", "Train", "Vertigo"].map(map => `<option>${map}</option>`).join("");
-      const metrics = [["kills", "K", 1000, 1], ["deaths", "D", 1000, 1], ["assists", "A", 1000, 1], ["headshots", "HS%", 100, 1], ["adr", "ADR", 250, 0.1]];
+      const metrics = [["kills", "K", 1000, 1], ["deaths", "D", 1000, 1], ["assists", "A", 1000, 1], ["headshots", "HS%", 100, 1], ["adr", "ADR", 10000, 0.1]];
       const rosterGroups = ["a", "b"].map(side => `<section class="match-stat-group"><div class="match-roster-tools"><h3>Skład ${side.toUpperCase()} <span class="lineup-count" data-lineup-count="${side}">0 / 5</span></h3><label class="match-roster-search"><span aria-hidden="true">⌕</span><input type="search" data-lineup-search="${side}" placeholder="Szukaj gracza..." aria-label="Szukaj gracza do składu ${side.toUpperCase()}"></label></div><div class="player-picker-results" data-player-results="${side}" role="listbox" aria-label="Wybór gracza do składu ${side.toUpperCase()}"></div><div class="match-stat-row match-stat-head"><span>Zawodnik</span>${metrics.map(([, label]) => `<span>${label}</span>`).join("")}</div><div data-selected-players="${side}"></div></section>`).join("");
       const lineups = { a: [], b: [] };
       const searchTerms = { a: "", b: "" };

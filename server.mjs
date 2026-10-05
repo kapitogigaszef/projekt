@@ -6,6 +6,34 @@ import { fileURLToPath } from "node:url";
 
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
 const defaultDataFile = path.join(rootDir, ".runtime", "league.json");
+const defaultJsonBinId = "6ac3d214ffd5d160534fd41a";
+const jsonBinBaseUrl = "https://api.jsonbin.io/v3/b";
+
+async function loadLocalEnv() {
+  let content;
+  try {
+    content = await readFile(path.join(rootDir, ".env"), "utf8");
+  } catch (error) {
+    if (error.code === "ENOENT") return;
+    throw error;
+  }
+  for (const line of content.split(/\r?\n/)) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) continue;
+    const separator = trimmed.indexOf("=");
+    if (separator < 1) continue;
+    const name = trimmed.slice(0, separator).trim();
+    if (!/^[A-Z_][A-Z0-9_]*$/.test(name) || process.env[name] !== undefined) continue;
+    let value = trimmed.slice(separator + 1).trim();
+    if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+      value = value.slice(1, -1);
+    }
+    if (value) process.env[name] = value;
+  }
+}
+
+await loadLocalEnv();
+
 const cookieName = "cs2_admin_session";
 const sessionLifetimeMs = 8 * 60 * 60 * 1000;
 const maps = new Set(["Ancient", "Anubis", "Dust2", "Inferno", "Mirage", "Nuke", "Train", "Vertigo"]);
@@ -125,21 +153,49 @@ function validDate(value) {
   return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === value;
 }
 
-export async function createAppServer({ dataFile = process.env.DATA_FILE || defaultDataFile } = {}) {
+export async function createAppServer({
+  dataFile = process.env.DATA_FILE || defaultDataFile,
+  jsonBinId = process.env.JSONBIN_BIN_ID || defaultJsonBinId,
+  jsonBinMasterKey = process.env.JSONBIN_MASTER_KEY,
+  fetchImpl = globalThis.fetch
+} = {}) {
   const sessions = new Map();
   const loginAttempts = new Map();
+  const remoteStore = jsonBinMasterKey ? {
+    url: `${jsonBinBaseUrl}/${encodeURIComponent(jsonBinId)}`,
+    headers: { "Content-Type": "application/json", "X-Master-Key": jsonBinMasterKey }
+  } : null;
   let state;
 
-  try {
-    state = JSON.parse(await readFile(dataFile, "utf8"));
-  } catch (error) {
-    if (error.code !== "ENOENT") throw error;
-    state = structuredClone(seedState);
-    await mkdir(path.dirname(dataFile), { recursive: true });
-    await writeFile(dataFile, JSON.stringify(state, null, 2), { mode: 0o600 });
+  if (remoteStore) {
+    const response = await fetchImpl(remoteStore.url, { method: "GET", headers: remoteStore.headers });
+    if (!response.ok) throw new Error(`JSONBin GET failed (${response.status}); sprawdź BIN ID i JSONBIN_MASTER_KEY.`);
+    const payload = await response.json();
+    state = payload.record ?? payload;
+    if (!state || !Array.isArray(state.players) || !Array.isArray(state.matches)) {
+      throw new Error("JSONBin zwrócił dane w nieprawidłowym formacie ligi.");
+    }
+  } else {
+    try {
+      state = JSON.parse(await readFile(dataFile, "utf8"));
+    } catch (error) {
+      if (error.code !== "ENOENT") throw error;
+      state = structuredClone(seedState);
+      await mkdir(path.dirname(dataFile), { recursive: true });
+      await writeFile(dataFile, JSON.stringify(state, null, 2), { mode: 0o600 });
+    }
   }
 
   async function persist() {
+    if (remoteStore) {
+      const response = await fetchImpl(remoteStore.url, {
+        method: "PUT",
+        headers: remoteStore.headers,
+        body: JSON.stringify(state)
+      });
+      if (!response.ok) throw new Error(`JSONBin PUT failed (${response.status}).`);
+      return;
+    }
     await mkdir(path.dirname(dataFile), { recursive: true });
     const temporaryFile = `${dataFile}.${randomBytes(5).toString("hex")}.tmp`;
     await writeFile(temporaryFile, JSON.stringify(state, null, 2), { mode: 0o600 });
@@ -430,5 +486,8 @@ if (isMainModule) {
   const port = Number(process.env.PORT || 8000);
   const host = process.env.HOST || "0.0.0.0";
   const server = await createAppServer();
-  server.listen(port, host, () => console.log(`Fragline działa na http://${host}:${port}`));
+  server.listen(port, host, () => {
+    console.log(`Fragline działa na http://${host}:${port}`);
+    if (!process.env.JSONBIN_MASTER_KEY) console.warn("JSONBIN_MASTER_KEY nie jest ustawiony; dane są zapisywane lokalnie.");
+  });
 }

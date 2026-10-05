@@ -16,4 +16,8 @@ Przy pierwszym uruchomieniu wybierz „Zaloguj admina” i utwórz konto. Login 
 
 Zalogowany administrator może dodawać i usuwać zawodników oraz mecze. Zawodnik w katalogu ma tylko nick; nie przypisuje się mu roli ani drużyny. Przy dodawaniu meczu podaje się własne nazwy obu drużyn, wybiera pięciu zawodników na stronę i wpisuje ich statystyki. Dane są zapisywane w `.runtime/league.json` i pozostają po restarcie serwera.
 
+## JSONBin
+
+Domyślny BIN ID: `6ac3d214ffd5d160534fd41a`. Wpisz prawdziwy klucz JSONBin w lokalnym pliku `.env` (pole `JSONBIN_MASTER_KEY=`); ten plik jest ignorowany przez Git. Opcjonalnie BIN ID można nadpisać przez `JSONBIN_BIN_ID`. Serwer pobiera stan binu metodą GET przy starcie i zapisuje zmiany admina metodą PUT. Klucz jest wysyłany wyłącznie z backendu w nagłówku `X-Master-Key`; nie umieszczaj go w HTML ani repozytorium. Bez klucza serwer pozostaje w lokalnym trybie `.runtime/league.json`.
+
 To lokalny panel demonstracyjny. Przed udostępnieniem publicznie uruchom go za HTTPS i dodaj kopie zapasowe pliku danych.

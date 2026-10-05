@@ -14,7 +14,7 @@ const jsonRequest = (url, body, options = {}) => fetch(url, {
 test("admin setup, authentication, CRUD and persistence", async t => {
   const directory = await mkdtemp(path.join(os.tmpdir(), "fragline-admin-test-"));
   const dataFile = path.join(directory, "league.json");
-  let server = await createAppServer({ dataFile });
+  let server = await createAppServer({ dataFile, jsonBinMasterKey: "" });
   server.listen(0, "127.0.0.1");
   await new Promise(resolve => server.once("listening", resolve));
   let baseUrl = `http://127.0.0.1:${server.address().port}`;
@@ -110,7 +110,7 @@ test("admin setup, authentication, CRUD and persistence", async t => {
   assert.equal(afterLogout.status, 401);
 
   await new Promise(resolve => server.close(resolve));
-  server = await createAppServer({ dataFile });
+  server = await createAppServer({ dataFile, jsonBinMasterKey: "" });
   server.listen(0, "127.0.0.1");
   await new Promise(resolve => server.once("listening", resolve));
   baseUrl = `http://127.0.0.1:${server.address().port}`;
@@ -135,7 +135,7 @@ test("legacy team data migrates to global players and match-specific lineups", a
       stats: { OldAWP: [10, 5, 3, 90], OldSub: [5, 8, 1, 50], OldRifler: [8, 9, 2, 70] }
     }]
   }));
-  const server = await createAppServer({ dataFile });
+  const server = await createAppServer({ dataFile, jsonBinMasterKey: "" });
   server.listen(0, "127.0.0.1");
   await new Promise(resolve => server.once("listening", resolve));
   t.after(async () => {
@@ -148,4 +148,41 @@ test("legacy team data migrates to global players and match-specific lineups", a
   assert.equal("teams" in state, false);
   assert.equal("roles" in state, false);
   assert.deepEqual(state.matches[0].lineups, { a: ["OldAWP", "OldSub"], b: ["OldRifler"] });
+});
+
+test("JSONBin loads current state and writes admin changes to the provided bin", async t => {
+  const directory = await mkdtemp(path.join(os.tmpdir(), "fragline-jsonbin-test-"));
+  const dataFile = path.join(directory, "unused-local-state.json");
+  const binId = "6ac3d214ffd5d160534fd41a";
+  const masterKey = "test-jsonbin-master-key";
+  let remoteState = { admin: null, nextMatchId: 1, players: ["CloudPlayer"], matches: [], sigmaPoints: {} };
+  const requests = [];
+  const fetchImpl = async (url, options) => {
+    requests.push({ url, method: options.method, headers: options.headers });
+    if (options.method === "GET") return { ok: true, status: 200, json: async () => ({ record: structuredClone(remoteState) }) };
+    if (options.method === "PUT") {
+      remoteState = JSON.parse(options.body);
+      return { ok: true, status: 200, json: async () => ({ record: structuredClone(remoteState) }) };
+    }
+    return { ok: false, status: 405, json: async () => ({}) };
+  };
+  const server = await createAppServer({ dataFile, jsonBinId: binId, jsonBinMasterKey: masterKey, fetchImpl });
+  server.listen(0, "127.0.0.1");
+  await new Promise(resolve => server.once("listening", resolve));
+  t.after(async () => {
+    if (server.listening) await new Promise(resolve => server.close(resolve));
+    await rm(directory, { recursive: true, force: true });
+  });
+
+  assert.equal(requests[0].method, "GET");
+  assert.equal(requests[0].url, `https://api.jsonbin.io/v3/b/${binId}`);
+  assert.equal(requests[0].headers["X-Master-Key"], masterKey);
+  const baseUrl = `http://127.0.0.1:${server.address().port}`;
+  const setup = await jsonRequest(`${baseUrl}/api/setup`, { username: "cloudadmin", password: "cloudpass123" }, { method: "POST" });
+  assert.equal(setup.status, 201);
+  const cookie = setup.headers.get("set-cookie").split(";")[0];
+  const addPlayer = await jsonRequest(`${baseUrl}/api/admin/players`, { name: "CloudSecond" }, { method: "POST", headers: { Cookie: cookie } });
+  assert.equal(addPlayer.status, 201);
+  assert.equal(requests.filter(request => request.method === "PUT").length, 2);
+  assert.equal(remoteState.players.includes("CloudSecond"), true);
 });

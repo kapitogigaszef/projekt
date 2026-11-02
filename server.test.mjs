@@ -27,6 +27,7 @@ test("admin setup, authentication, CRUD and persistence", async t => {
   const initialState = await initialResponse.json();
   assert.equal(initialState.adminConfigured, false);
   assert.equal(initialState.matches.length, 3);
+  assert.equal("playerTiers" in initialState, false);
 
   const unauthorized = await jsonRequest(`${baseUrl}/api/admin/players`, {
     name: "NoAccess"
@@ -34,6 +35,12 @@ test("admin setup, authentication, CRUD and persistence", async t => {
   assert.equal(unauthorized.status, 401);
   const unauthorizedSigmaPoint = await jsonRequest(`${baseUrl}/api/admin/sigma-points`, { name: "m0NESY" }, { method: "POST" });
   assert.equal(unauthorizedSigmaPoint.status, 401);
+  const unauthorizedMap = await jsonRequest(`${baseUrl}/api/admin/maps`, { name: "Cache" }, { method: "POST" });
+  assert.equal(unauthorizedMap.status, 401);
+  const unauthorizedTier = await jsonRequest(`${baseUrl}/api/admin/players/m0NESY/tier`, { tier: 1 }, { method: "PUT" });
+  assert.equal(unauthorizedTier.status, 401);
+  const unauthorizedMatchEdit = await jsonRequest(`${baseUrl}/api/admin/matches/1`, {}, { method: "PUT" });
+  assert.equal(unauthorizedMatchEdit.status, 401);
 
   const shortSetup = await jsonRequest(`${baseUrl}/api/setup`, { username: "testadmin", password: "short" }, { method: "POST" });
   assert.equal(shortSetup.status, 400);
@@ -44,6 +51,26 @@ test("admin setup, authentication, CRUD and persistence", async t => {
   const cookie = setup.headers.get("set-cookie").split(";")[0];
   const duplicateSetup = await jsonRequest(`${baseUrl}/api/setup`, { username: "testadmin", password }, { method: "POST" });
   assert.equal(duplicateSetup.status, 409);
+
+  const topTier = await jsonRequest(`${baseUrl}/api/admin/players/m0NESY/tier`, { tier: 1 }, { method: "PUT", headers: { Cookie: cookie } });
+  assert.equal(topTier.status, 200);
+  assert.equal((await topTier.json()).value, 1.5);
+  const lowTier = await jsonRequest(`${baseUrl}/api/admin/players/NiKo/tier`, { tier: 4 }, { method: "PUT", headers: { Cookie: cookie } });
+  assert.equal(lowTier.status, 200);
+  const invalidTier = await jsonRequest(`${baseUrl}/api/admin/players/NiKo/tier`, { tier: 5 }, { method: "PUT", headers: { Cookie: cookie } });
+  assert.equal(invalidTier.status, 400);
+  const adminState = await (await fetch(`${baseUrl}/api/state`, { headers: { Cookie: cookie } })).json();
+  assert.deepEqual(adminState.playerTiers, { m0NESY: 1, NiKo: 4 });
+  const publicState = await (await fetch(`${baseUrl}/api/state`)).json();
+  assert.equal("playerTiers" in publicState, false);
+
+  const addMap = await jsonRequest(`${baseUrl}/api/admin/maps`, { name: "Cache" }, { method: "POST", headers: { Cookie: cookie } });
+  assert.equal(addMap.status, 201);
+  assert.equal((await addMap.json()).maps.includes("Cache"), true);
+  const duplicateMap = await jsonRequest(`${baseUrl}/api/admin/maps`, { name: "cache" }, { method: "POST", headers: { Cookie: cookie } });
+  assert.equal(duplicateMap.status, 409);
+  const invalidMap = await jsonRequest(`${baseUrl}/api/admin/maps`, { name: "<invalid>" }, { method: "POST", headers: { Cookie: cookie } });
+  assert.equal(invalidMap.status, 400);
 
   const stored = await readFile(dataFile, "utf8");
   assert.equal(stored.includes(password), false);
@@ -74,6 +101,18 @@ test("admin setup, authentication, CRUD and persistence", async t => {
     a: ["m0NESY", "NiKo", "ropz", "b1t", "TestRifler"],
     b: ["donk", "ZywOo", "siuhy", "frozen", "JL"]
   };
+  const balancedDraft = await jsonRequest(`${baseUrl}/api/draft/balance`, { players: initialState.players }, { method: "POST" });
+  assert.equal(balancedDraft.status, 200);
+  const balancedTeams = (await balancedDraft.json()).teams;
+  assert.equal(balancedTeams.a.length, 5);
+  assert.equal(balancedTeams.b.length, 5);
+  assert.deepEqual([...balancedTeams.a, ...balancedTeams.b].sort(), [...initialState.players].sort());
+  const playerValues = Object.fromEntries(initialState.players.map(name => [name, ({ 1: 1.5, 2: 1, 3: 0.5, 4: 0.25 })[adminState.playerTiers[name] || 2]]));
+  const sumA = balancedTeams.a.reduce((sum, name) => sum + playerValues[name], 0);
+  const sumB = balancedTeams.b.reduce((sum, name) => sum + playerValues[name], 0);
+  assert.equal(Math.abs(sumA - sumB), 0.25);
+  const invalidDraft = await jsonRequest(`${baseUrl}/api/draft/balance`, { players: initialState.players.slice(0, 9) }, { method: "POST" });
+  assert.equal(invalidDraft.status, 400);
   const stats = Object.fromEntries([...lineups.a, ...lineups.b].map(name => [name, [10, 9, 2, 80, 40]]));
   const invalidLineup = await jsonRequest(`${baseUrl}/api/admin/matches`, {
     date: "2026-02-31", map: "Dust2", a: "Red Dragons", b: "Night Owls", scoreA: 13, scoreB: 8, lineups, stats
@@ -85,7 +124,7 @@ test("admin setup, authentication, CRUD and persistence", async t => {
   }, { method: "POST", headers: { Cookie: cookie } });
   assert.equal(incompleteLineup.status, 400);
   const addMatch = await jsonRequest(`${baseUrl}/api/admin/matches`, {
-    date: "2026-09-30", map: "Dust2", a: "Red Dragons", b: "Night Owls", scoreA: 13, scoreB: 8, lineups, stats
+    date: "2026-09-30", map: "Cache", a: "Red Dragons", b: "Night Owls", scoreA: 13, scoreB: 8, lineups, stats
   }, { method: "POST", headers: { Cookie: cookie } });
   assert.equal(addMatch.status, 201);
   const createdMatch = await addMatch.json();
@@ -93,8 +132,27 @@ test("admin setup, authentication, CRUD and persistence", async t => {
   assert.equal(createdMatch.match.a, "Red Dragons");
   assert.equal(createdMatch.match.lineups.a.length, 5);
 
+  const editedMatchResponse = await jsonRequest(`${baseUrl}/api/admin/matches/${createdMatch.match.id}`, {
+    date: "2026-10-01", map: "Mirage", a: "Red Dragons", b: "Night Owls", scoreA: 8, scoreB: 13, lineups, stats
+  }, { method: "PUT", headers: { Cookie: cookie } });
+  assert.equal(editedMatchResponse.status, 200);
+  const editedMatch = (await editedMatchResponse.json()).match;
+  assert.equal(editedMatch.id, createdMatch.match.id);
+  assert.equal(editedMatch.date, "2026-10-01");
+  assert.equal(editedMatch.scoreB, 13);
+  const invalidMatchEdit = await jsonRequest(`${baseUrl}/api/admin/matches/${createdMatch.match.id}`, {
+    date: "2026-10-01", map: "Mirage", a: "Red Dragons", b: "Night Owls", scoreA: 8, scoreB: 13,
+    lineups: { a: lineups.a, b: lineups.b.slice(0, 4) }, stats
+  }, { method: "PUT", headers: { Cookie: cookie } });
+  assert.equal(invalidMatchEdit.status, 400);
+  const unchangedMatch = (await (await fetch(`${baseUrl}/api/state`)).json()).matches[0];
+  assert.equal(unchangedMatch.date, "2026-10-01");
+  assert.equal(unchangedMatch.scoreB, 13);
+
   const deleteAddedPlayer = await fetch(`${baseUrl}/api/admin/players/TestRifler`, { method: "DELETE", headers: { Cookie: cookie } });
   assert.equal(deleteAddedPlayer.status, 200);
+  const removedTier = await (await fetch(`${baseUrl}/api/state`, { headers: { Cookie: cookie } })).json();
+  assert.equal("TestRifler" in removedTier.playerTiers, false);
   const afterPlayerRemoval = await (await fetch(`${baseUrl}/api/state`)).json();
   assert.equal(afterPlayerRemoval.players.includes("TestRifler"), false);
   assert.equal("TestRifler" in afterPlayerRemoval.sigmaPoints, false);
@@ -116,6 +174,10 @@ test("admin setup, authentication, CRUD and persistence", async t => {
   baseUrl = `http://127.0.0.1:${server.address().port}`;
   const persisted = await (await fetch(`${baseUrl}/api/state`)).json();
   assert.equal(persisted.adminConfigured, true);
+  assert.equal(persisted.maps.includes("Cache"), true);
+  assert.equal("playerTiers" in persisted, false);
+  const persistedStorage = JSON.parse(await readFile(dataFile, "utf8"));
+  assert.deepEqual(persistedStorage.playerTiers, { m0NESY: 1, NiKo: 4 });
   assert.equal(persisted.matches.length, 3);
   assert.equal(persisted.players.includes("TestRifler"), false);
   assert.equal(persisted.sigmaPoints.m0NESY, 1);
@@ -155,7 +217,7 @@ test("JSONBin loads current state and writes admin changes to the provided bin",
   const dataFile = path.join(directory, "unused-local-state.json");
   const binId = "6ac3d214ffd5d160534fd41a";
   const masterKey = "test-jsonbin-master-key";
-  let remoteState = { admin: null, nextMatchId: 1, players: ["CloudPlayer"], matches: [], sigmaPoints: {} };
+  let remoteState = { admin: null, nextMatchId: 1, players: ["CloudPlayer"], matches: [], playerTiers: {}, sigmaPoints: {} };
   const requests = [];
   const fetchImpl = async (url, options) => {
     requests.push({ url, method: options.method, headers: options.headers });
@@ -183,6 +245,6 @@ test("JSONBin loads current state and writes admin changes to the provided bin",
   const cookie = setup.headers.get("set-cookie").split(";")[0];
   const addPlayer = await jsonRequest(`${baseUrl}/api/admin/players`, { name: "CloudSecond" }, { method: "POST", headers: { Cookie: cookie } });
   assert.equal(addPlayer.status, 201);
-  assert.equal(requests.filter(request => request.method === "PUT").length, 2);
+  assert.equal(requests.filter(request => request.method === "PUT").length, 3);
   assert.equal(remoteState.players.includes("CloudSecond"), true);
 });

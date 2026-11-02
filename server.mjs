@@ -8,6 +8,8 @@ const rootDir = path.dirname(fileURLToPath(import.meta.url));
 const defaultDataFile = path.join(rootDir, ".runtime", "league.json");
 const defaultJsonBinId = "6ac3d214ffd5d160534fd41a";
 const jsonBinBaseUrl = "https://api.jsonbin.io/v3/b";
+const defaultMaps = ["Ancient", "Anubis", "Dust2", "Inferno", "Mirage", "Nuke", "Train", "Vertigo"];
+const tierValues = { 1: 1.5, 2: 1, 3: 0.5, 4: 0.25 };
 
 async function loadLocalEnv() {
   let content;
@@ -36,11 +38,12 @@ await loadLocalEnv();
 
 const cookieName = "cs2_admin_session";
 const sessionLifetimeMs = 8 * 60 * 60 * 1000;
-const maps = new Set(["Ancient", "Anubis", "Dust2", "Inferno", "Mirage", "Nuke", "Train", "Vertigo"]);
 const seedState = {
   admin: null,
   nextMatchId: 4,
+  maps: defaultMaps,
   players: ["m0NESY", "NiKo", "ropz", "b1t", "Snax", "donk", "ZywOo", "siuhy", "frozen", "JL"],
+  playerTiers: {},
   sigmaPoints: {},
   matches: [
     {
@@ -153,6 +156,77 @@ function validDate(value) {
   return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === value;
 }
 
+function validateMatchInput(body, players, maps) {
+  const scoreA = Number(body.scoreA);
+  const scoreB = Number(body.scoreB);
+  const teamA = typeof body.a === "string" ? body.a.trim() : "";
+  const teamB = typeof body.b === "string" ? body.b.trim() : "";
+  const lineups = body.lineups;
+  if (!validDate(body.date) || !maps.includes(body.map) ||
+      !/^[\p{L}\p{N}][\p{L}\p{N} .&'_-]{1,31}$/u.test(teamA) || !/^[\p{L}\p{N}][\p{L}\p{N} .&'_-]{1,31}$/u.test(teamB) || teamA.toLowerCase() === teamB.toLowerCase() ||
+      !validNumber(scoreA, 99) || !validNumber(scoreB, 99) || scoreA === scoreB) {
+    return { error: "Sprawdź datę, mapę, drużyny i wynik meczu." };
+  }
+  if (!Array.isArray(lineups?.a) || !Array.isArray(lineups?.b) || lineups.a.length !== 5 || lineups.b.length !== 5) {
+    return { error: "Wybierz po 5 różnych zawodników zarejestrowanych na mecz." };
+  }
+  const selectedPlayers = [...lineups.a, ...lineups.b];
+  if (new Set(selectedPlayers).size !== 10 || selectedPlayers.some(name => !players.includes(name))) {
+    return { error: "Wybierz po 5 różnych zawodników zarejestrowanych na mecz." };
+  }
+  const stats = {};
+  for (const name of selectedPlayers) {
+    if (!Array.isArray(body.stats?.[name]) || body.stats[name].length < 4) {
+      return { error: `Uzupełnij statystyki zawodnika ${name}.` };
+    }
+    const [kills, deaths, assists, adr, headshots = 0] = body.stats[name].map(Number);
+    if (![kills, deaths, assists, headshots].every(value => validNumber(value, 1000)) || !Number.isFinite(adr) || adr < 0 || headshots > 100) {
+      return { error: `Nieprawidłowe statystyki zawodnika ${name}.` };
+    }
+    stats[name] = [kills, deaths, assists, adr, headshots];
+  }
+  return {
+    match: {
+      date: body.date, map: body.map, a: teamA, b: teamB, scoreA, scoreB,
+      lineups: { a: [...lineups.a], b: [...lineups.b] }, stats
+    }
+  };
+}
+
+function balancedTeamSplit(names, playerTiers) {
+  const players = names.map(name => ({ name, value: tierValues[playerTiers[name]] ?? tierValues[2] }));
+  const totalValue = players.reduce((total, player) => total + player.value, 0);
+  const candidates = [];
+  let smallestDifference = Infinity;
+  const teamA = [];
+
+  function choosePlayers(start, teamValue) {
+    if (teamA.length === 5) {
+      const difference = Math.abs(totalValue - teamValue * 2);
+      if (difference < smallestDifference - 1e-9) {
+        smallestDifference = difference;
+        candidates.length = 0;
+      }
+      if (Math.abs(difference - smallestDifference) < 1e-9) candidates.push([...teamA]);
+      return;
+    }
+    const needed = 5 - teamA.length;
+    for (let index = start; index <= players.length - needed; index++) {
+      teamA.push(players[index]);
+      choosePlayers(index + 1, teamValue + players[index].value);
+      teamA.pop();
+    }
+  }
+
+  choosePlayers(0, 0);
+  const chosenTeamA = candidates[Math.floor(Math.random() * candidates.length)];
+  const teamAPlayers = new Set(chosenTeamA.map(player => player.name));
+  return {
+    a: chosenTeamA.map(player => player.name),
+    b: players.filter(player => !teamAPlayers.has(player.name)).map(player => player.name)
+  };
+}
+
 export async function createAppServer({
   dataFile = process.env.DATA_FILE || defaultDataFile,
   jsonBinId = process.env.JSONBIN_BIN_ID || defaultJsonBinId,
@@ -222,6 +296,14 @@ export async function createAppServer({
     state.sigmaPoints = {};
     await persist();
   }
+  if (!Array.isArray(state.maps)) {
+    state.maps = [...new Set([...defaultMaps, ...state.matches.map(match => match.map).filter(map => typeof map === "string")])];
+    await persist();
+  }
+  if (!state.playerTiers || typeof state.playerTiers !== "object" || Array.isArray(state.playerTiers)) {
+    state.playerTiers = {};
+    await persist();
+  }
 
   function currentSession(req) {
     const token = requestCookie(req, cookieName);
@@ -250,14 +332,17 @@ export async function createAppServer({
 
     if (req.method === "GET" && url.pathname === "/api/state") {
       const session = currentSession(req);
-      json(res, 200, {
+      const responseState = {
         players: state.players,
+        maps: state.maps,
         sigmaPoints: state.sigmaPoints,
         matches: state.matches,
         adminConfigured: Boolean(state.admin),
         isAdmin: Boolean(session),
         username: session?.username || null
-      });
+      };
+      if (session) responseState.playerTiers = state.playerTiers;
+      json(res, 200, responseState);
       return;
     }
 
@@ -315,9 +400,55 @@ export async function createAppServer({
       return;
     }
 
+    if (req.method === "POST" && url.pathname === "/api/draft/balance") {
+      const body = await readJson(req);
+      const names = body.players;
+      if (!Array.isArray(names) || names.length !== 10 || new Set(names).size !== 10 || names.some(name => !state.players.includes(name))) {
+        json(res, 400, { error: "Wybierz dokładnie 10 różnych zarejestrowanych zawodników." });
+        return;
+      }
+      json(res, 200, { teams: balancedTeamSplit(names, state.playerTiers) });
+      return;
+    }
+
     const session = currentSession(req);
     if (!session) {
       json(res, 401, { error: "Zaloguj się jako administrator." });
+      return;
+    }
+
+    const playerTierMatch = url.pathname.match(/^\/api\/admin\/players\/([^/]+)\/tier$/);
+    if (req.method === "PUT" && playerTierMatch) {
+      const name = decodeURIComponent(playerTierMatch[1]);
+      if (!state.players.includes(name)) {
+        json(res, 404, { error: "Nie znaleziono zawodnika." });
+        return;
+      }
+      const body = await readJson(req);
+      if (!Number.isInteger(body.tier) || !Object.hasOwn(tierValues, body.tier)) {
+        json(res, 400, { error: "Wybierz tier od 1 do 4." });
+        return;
+      }
+      state.playerTiers[name] = body.tier;
+      await persist();
+      json(res, 200, { ok: true, name, tier: body.tier, value: tierValues[body.tier] });
+      return;
+    }
+
+    if (req.method === "POST" && url.pathname === "/api/admin/maps") {
+      const body = await readJson(req);
+      const name = typeof body.name === "string" ? body.name.trim() : "";
+      if (!/^[\p{L}\p{N}][\p{L}\p{N} ._-]{1,31}$/u.test(name)) {
+        json(res, 400, { error: "Nazwa mapy musi mieć 2–32 znaki: litery, cyfry, spacje, kropki, myślniki lub podkreślenia." });
+        return;
+      }
+      if (state.maps.some(map => map.toLowerCase() === name.toLowerCase())) {
+        json(res, 409, { error: "Mapa o takiej nazwie już istnieje." });
+        return;
+      }
+      state.maps.push(name);
+      await persist();
+      json(res, 201, { ok: true, map: name, maps: state.maps });
       return;
     }
 
@@ -369,6 +500,7 @@ export async function createAppServer({
         return;
       }
       state.players = state.players.filter(player => player !== name);
+      delete state.playerTiers[name];
       delete state.sigmaPoints[name];
       for (const match of state.matches) {
         delete match.stats[name];
@@ -382,43 +514,36 @@ export async function createAppServer({
 
     if (req.method === "POST" && url.pathname === "/api/admin/matches") {
       const body = await readJson(req);
-      const scoreA = Number(body.scoreA);
-      const scoreB = Number(body.scoreB);
-      const teamA = typeof body.a === "string" ? body.a.trim() : "";
-      const teamB = typeof body.b === "string" ? body.b.trim() : "";
-      const lineups = body.lineups;
-      const selectedPlayers = [...(lineups?.a || []), ...(lineups?.b || [])];
-      if (!validDate(body.date) || !maps.has(body.map) ||
-          !/^[\p{L}\p{N}][\p{L}\p{N} .&'_-]{1,31}$/u.test(teamA) || !/^[\p{L}\p{N}][\p{L}\p{N} .&'_-]{1,31}$/u.test(teamB) || teamA.toLowerCase() === teamB.toLowerCase() ||
-          !validNumber(scoreA, 99) || !validNumber(scoreB, 99) || scoreA === scoreB) {
-        json(res, 400, { error: "Sprawdź datę, mapę, drużyny i wynik meczu." });
+      const validated = validateMatchInput(body, state.players, state.maps);
+      if (validated.error) {
+        json(res, 400, { error: validated.error });
         return;
-      }
-      if (!Array.isArray(lineups?.a) || !Array.isArray(lineups?.b) || lineups.a.length !== 5 || lineups.b.length !== 5 ||
-          new Set(selectedPlayers).size !== 10 || selectedPlayers.some(name => !state.players.includes(name))) {
-        json(res, 400, { error: "Wybierz po 5 różnych zawodników zarejestrowanych na mecz." });
-        return;
-      }
-      const stats = {};
-      for (const name of selectedPlayers) {
-        if (!Array.isArray(body.stats?.[name]) || body.stats[name].length < 4) {
-          json(res, 400, { error: `Uzupełnij statystyki zawodnika ${name}.` });
-          return;
-        }
-        const [kills, deaths, assists, adr, headshots = 0] = body.stats[name].map(Number);
-        if (![kills, deaths, assists, headshots].every(value => validNumber(value, 1000)) || !Number.isFinite(adr) || adr < 0 || headshots > 100) {
-          json(res, 400, { error: `Nieprawidłowe statystyki zawodnika ${name}.` });
-          return;
-        }
-        stats[name] = [kills, deaths, assists, adr, headshots];
       }
       const match = {
-        id: state.nextMatchId++, date: body.date, map: body.map, a: teamA, b: teamB,
-        scoreA, scoreB, lineups: { a: [...lineups.a], b: [...lineups.b] }, stats
+        id: state.nextMatchId++, ...validated.match
       };
       state.matches.unshift(match);
       await persist();
       json(res, 201, { ok: true, match });
+      return;
+    }
+
+    const updateMatch = url.pathname.match(/^\/api\/admin\/matches\/(\d+)$/);
+    if (req.method === "PUT" && updateMatch) {
+      const index = state.matches.findIndex(match => match.id === Number(updateMatch[1]));
+      if (index < 0) {
+        json(res, 404, { error: "Nie znaleziono meczu." });
+        return;
+      }
+      const body = await readJson(req);
+      const validated = validateMatchInput(body, state.players, state.maps);
+      if (validated.error) {
+        json(res, 400, { error: validated.error });
+        return;
+      }
+      state.matches[index] = { id: state.matches[index].id, ...validated.match };
+      await persist();
+      json(res, 200, { ok: true, match: state.matches[index] });
       return;
     }
 

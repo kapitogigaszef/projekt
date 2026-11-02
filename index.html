@@ -393,6 +393,10 @@
     .players-table .player-avatar { width: 30px; height: 30px; flex-basis: 30px; font-size: 10px; }
     .players-table .player-name { font-size: 11px; }
     .players-table .player-team { font-size: 8px; }
+    .players-table { min-width: 930px; }
+    .tier-cell { min-width: 126px; }
+    .player-tier-select { width: 100%; min-height: 31px; border: 1px solid #68421b; border-radius: 5px; padding: 4px 7px; background: #1d202a; color: #ffbd55; font-size: 10px; font-weight: 700; }
+    .player-tier-select:focus { outline: 1px solid #c47426; }
     .games-cell strong { font-size: 11px; }
     .games-cell small { margin-left: 4px; color: #90a0b6; font-size: 8px; }
     .kda-cell { font-weight: 700; }
@@ -609,6 +613,10 @@
     .admin-field { display: grid; gap: 5px; min-width: 0; color: #b6c1d2; font-size: 11px; font-weight: 700; }
     .admin-field input, .admin-field select { width: 100%; min-height: 37px; border: 1px solid #333b4b; border-radius: 6px; padding: 7px 9px; outline: 0; background: #10131a; color: var(--text); font-size: 13px; }
     .admin-field input:focus, .admin-field select:focus { border-color: #c47426; }
+    .map-picker-row, .map-add-row { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 6px; }
+    .map-add-toggle, .map-add-submit { min-width: 37px; min-height: 37px; border: 1px solid #68421b; border-radius: 6px; padding: 0 9px; background: #2c2419; color: #ffb33b; cursor: pointer; font-size: 11px; font-weight: 800; }
+    .map-add-submit { min-width: 64px; }
+    .map-add-toggle:hover, .map-add-submit:hover { background: #3b2c19; }
     .admin-help { margin: 0; color: #8fa0b6; font-size: 11px; line-height: 1.45; }
     .admin-error { min-height: 0; margin: 0; color: #ff8792; font-size: 12px; }
     .admin-form-actions { display: flex; justify-content: end; gap: 8px; padding-top: 5px; }
@@ -629,6 +637,58 @@
     .player-option:hover { border-color: #a76124; background: #29231d; color: #ffbd55; }
     .player-option:disabled { opacity: .45; cursor: not-allowed; }
     .player-option-empty { grid-column: 1 / -1; padding: 7px 2px; color: #91a0b6; font-size: 11px; }
+    .draft-layout { display: grid; grid-template-columns: minmax(0,1.1fr) minmax(0,.9fr); gap: 15px; align-items: start; }
+    .draft-panel, .draft-results { min-width: 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); }
+    .draft-panel-head, .draft-results-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 15px 16px; border-bottom: 1px solid var(--line); }
+    .draft-panel-head h2, .draft-results-head h2 { margin: 0; font-size: 14px; font-weight: 800; text-transform: uppercase; }
+    .draft-panel-head p { margin: 4px 0 0; color: var(--muted); font-size: 11px; }
+    .draft-mode-bar { display: flex; justify-content: space-between; align-items: center; gap: 10px; border-bottom: 1px solid var(--line); padding: 10px 13px; }
+    .draft-mode-label { color: var(--muted); font-size: 10px; }
+    .draft-mode-switch { display: inline-flex; gap: 3px; border: 1px solid #333b4b; border-radius: 6px; padding: 3px; background: #10131a; }
+    .draft-mode-switch button { min-height: 27px; border: 0; border-radius: 4px; padding: 0 9px; background: transparent; color: #aab5c6; cursor: pointer; font-size: 10px; font-weight: 700; }
+    .draft-mode-switch button[aria-pressed="true"] { background: #332817; color: #ffbd55; }
+    .draft-mode-switch button:disabled { opacity: .5; cursor: not-allowed; }
+    .draft-selected-count { flex: 0 0 auto; border: 1px solid #68421b; border-radius: 5px; padding: 5px 8px; color: #ffb33b; font-size: 11px; font-weight: 800; }
+    .draft-player-list { display: grid; grid-template-columns: repeat(auto-fill,minmax(135px,1fr)); gap: 7px; padding: 13px; }
+    .draft-player-option { display: flex; justify-content: space-between; align-items: center; gap: 8px; min-width: 0; min-height: 38px; border: 1px solid #333b4b; border-radius: 6px; padding: 6px 9px; background: #1c202a; color: #dce2ec; cursor: pointer; text-align: left; }
+    .draft-player-option span:first-child { overflow: hidden; font-size: 11px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+    .draft-player-option span:last-child { color: #8492a6; font-size: 8px; font-weight: 800; }
+    .draft-player-option:hover:not(:disabled) { border-color: #9c5e22; }
+    .draft-player-option.selected { border-color: #a76124; background: #302619; color: #ffc15b; }
+    .draft-player-option.selected span:last-child { color: #ffb33b; }
+    .draft-player-option:disabled { opacity: .42; cursor: not-allowed; }
+    .draft-actions { display: flex; justify-content: space-between; align-items: center; gap: 8px; border-top: 1px solid var(--line); padding: 12px 13px; }
+    .draft-actions-note { color: var(--muted); font-size: 10px; }
+    .draft-button { min-height: 34px; border: 1px solid #333b4b; border-radius: 6px; padding: 0 11px; background: #202432; color: #d1d8e4; cursor: pointer; font-size: 10px; font-weight: 800; }
+    .draft-button.primary { border-color: #b65b12; background: #e8790c; color: white; }
+    .draft-button:hover:not(:disabled) { filter: brightness(1.12); }
+    .draft-button:disabled { opacity: .4; cursor: not-allowed; }
+    .draft-results-head { padding: 13px 15px; }
+    .draft-results-head span { color: var(--muted); font-size: 10px; }
+    .draft-teams { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 12px; }
+    .draft-team { min-width: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 6px; background: #141720; animation: draft-reveal .2s ease-out both; }
+    .draft-team:nth-child(2) { animation-delay: .06s; }
+    .draft-team h3 { margin: 0; border-bottom: 1px solid var(--line); padding: 10px; color: #83b9ff; font-size: 11px; font-weight: 800; text-transform: uppercase; }
+    .draft-team:nth-child(2) h3 { color: #ffad35; }
+    .draft-team ol { display: grid; gap: 7px; margin: 0; padding: 11px 11px 11px 30px; color: #c9d2e0; font-size: 11px; }
+    .draft-team li::marker { color: #83b9ff; font-weight: 800; }
+    .draft-team:nth-child(2) li::marker { color: #ffad35; }
+    .draft-player-hidden { color: #8994a6; }
+    .draft-player-revealed { display: inline-block; animation: draft-name-reveal .28s cubic-bezier(.2,.8,.25,1.3) both; }
+    .draft-results.drawing .draft-team { animation: draft-shuffle .16s ease-in-out infinite alternate; }
+    .draft-results.drawing .draft-team:nth-child(2) { animation-delay: .08s; }
+    .draft-results.drawing[data-animation="reveal"] .draft-team { animation: draft-team-pulse .7s ease-in-out infinite alternate; }
+    .draft-spin-progress { height: 3px; overflow: hidden; background: #292e3d; }
+    .draft-spin-progress span { display: block; width: 100%; height: 100%; transform: scaleX(0); transform-origin: left; background: linear-gradient(90deg,#ff7800,#ffc15b); animation: draft-progress 2.7s cubic-bezier(.15,.7,.25,1) forwards; }
+    .draft-reroll-row { display: flex; justify-content: end; border-top: 1px solid var(--line); padding: 10px 12px; }
+    @keyframes draft-reveal { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes draft-shuffle { from { transform: translateY(0); filter: brightness(1); } to { transform: translateY(-3px); filter: brightness(1.35); } }
+    @keyframes draft-team-pulse { from { border-color: #303747; } to { border-color: #a76124; box-shadow: 0 0 16px #ff780022; } }
+    @keyframes draft-name-reveal { from { opacity: 0; transform: translateY(8px) scale(.9); filter: blur(4px); } to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } }
+    @keyframes draft-progress { to { transform: scaleX(1); } }
+    @media (prefers-reduced-motion: reduce) { .draft-results.drawing .draft-team, .draft-spin-progress span, .draft-player-revealed { animation: none; } }
+    @media (max-width: 800px) { .draft-layout { grid-template-columns: 1fr; } }
+    @media (max-width: 560px) { .draft-player-list { grid-template-columns: repeat(2,minmax(0,1fr)); } .draft-teams { grid-template-columns: 1fr; } .draft-panel-head { align-items: start; } }
     .selected-player-name { display: flex; min-width: 0; align-items: center; gap: 6px; overflow: hidden; color: #eef2f8; font-size: 11px; font-weight: 700; }
     .selected-player-name span { overflow: hidden; text-overflow: ellipsis; }
     .remove-lineup-player { flex: 0 0 22px; width: 22px; height: 22px; border: 1px solid #58303a; border-radius: 4px; background: #2c1c24; color: #f18491; cursor: pointer; font-size: 14px; line-height: 1; }
@@ -666,6 +726,7 @@
         <button data-page="matches">◈ Mecze</button>
         <button data-page="players">♟ Zawodnicy</button>
         <button data-page="ranking">♜ Ranking (ADR)</button>
+        <button data-page="draft">⤨ Losowanie</button>
         <button data-page="sigma">✦ Ranking Sigm</button>
       </nav>
       <div class="header-actions"><div class="season"><span class="season-dot"></span> SEZON 2025 / 26</div><span class="admin-label" id="admin-label" hidden>ADMIN</span><button class="header-admin-btn" id="admin-open">♙ Zaloguj admina</button><button class="admin-logout" id="admin-logout" hidden>Wyloguj</button></div>
@@ -702,12 +763,24 @@
       </section>
       <section id="players-page" class="page" hidden>
         <div class="page-head"><div><p class="eyebrow">● Sezon 2025 / 26</p><h1>Baza zawodników</h1><p class="page-note">Wszyscy zarejestrowani gracze, wskaźniki K/D, fragi, ADR oraz współczynniki wygranych</p></div><div class="toolbar search-wrap"><button class="archive-action admin-only" id="add-player" hidden>＋ Dodaj zawodnika</button><input class="search" id="player-search" type="search" placeholder="Szukaj gracza (nick)..." aria-label="Szukaj zawodnika"></div></div>
-        <section class="card players-card"><div class="table-wrap"><table class="players-table"><thead><tr><th>Zawodnik</th><th>Mecze (W / L)</th><th>K / D / A</th><th>K/D Ratio</th><th>Średni ADR</th><th>Win rate</th><th>Akcja</th></tr></thead><tbody id="players-table"></tbody></table></div></section>
+        <section class="card players-card"><div class="table-wrap"><table class="players-table"><thead><tr><th>Zawodnik</th><th>Mecze (W / L)</th><th>K / D / A</th><th>K/D Ratio</th><th>Średni ADR</th><th>Win rate</th><th class="admin-only" hidden>Tier</th><th>Akcja</th></tr></thead><tbody id="players-table"></tbody></table></div></section>
       </section>
       <section id="ranking-page" class="page" hidden>
         <div class="ranking-hero"><span class="ranking-kicker">OFICJALNY RANKING CS2</span><h1>TABELA LIDERÓW (<span id="ranking-heading-metric">ŚREDNI ADR</span>)</h1><p>Główny wskaźnik skuteczności: Average Damage per Round (ADR). Zmień parametr, aby porównać graczy według innych statystyk.</p></div>
         <div class="ranking-podium" id="ranking-podium"></div>
         <section class="card ranking-card"><div class="ranking-titlebar"><div><h2>POSORTOWANO WEDŁUG: <strong id="ranking-sort-label">ŚREDNI ADR (OBRAŻENIA / RUNDA)</strong></h2></div><div class="ranking-sort-controls" id="ranking-sort-controls"><button class="ranking-sort-button active" data-ranking-sort="adr" aria-pressed="true">ADR</button><button class="ranking-sort-button" data-ranking-sort="kd" aria-pressed="false">K/D</button><button class="ranking-sort-button" data-ranking-sort="kills" aria-pressed="false">Kille</button><button class="ranking-sort-button" data-ranking-sort="winRate" aria-pressed="false">Win Rate</button></div></div><div class="table-wrap"><table class="ranking-table"><thead><tr><th>#</th><th>Zawodnik</th><th>Mecze (W/L)</th><th>K / D / A</th><th>K/D</th><th>Win rate</th><th>Średni ADR</th></tr></thead><tbody id="ranking-table"></tbody></table></div></section>
+      </section>
+      <section id="draft-page" class="page" hidden>
+        <div class="page-head"><div><p class="eyebrow">● Losowanie składów</p><h1>Losowanie 5v5</h1><p class="page-note">Wybierz 10 zawodników i podziel ich losowo na dwie drużyny.</p></div></div>
+        <div class="draft-layout">
+          <section class="draft-panel" aria-labelledby="draft-picker-title">
+            <header class="draft-panel-head"><div><h2 id="draft-picker-title">Pula zawodników</h2><p>Wybór jest tymczasowy i nie zapisuje się w lidze.</p></div><span class="draft-selected-count" id="draft-selected-count">0 / 10</span></header>
+            <div class="draft-mode-bar"><span class="draft-mode-label">Efekt losowania</span><div class="draft-mode-switch" role="group" aria-label="Wybierz animację losowania"><button type="button" data-draft-mode="shuffle" aria-pressed="false">↻ Tasowanie</button><button type="button" data-draft-mode="reveal" aria-pressed="true">✦ Odkrywanie</button></div></div>
+            <div class="draft-player-list" id="draft-player-list"></div>
+            <footer class="draft-actions"><span class="draft-actions-note" id="draft-selection-hint">Wybierz 10 graczy</span><div><button class="draft-button" id="draft-clear" type="button">Wyczyść</button> <button class="draft-button primary" id="draft-draw" type="button" disabled>Losuj składy</button></div></footer>
+          </section>
+          <section class="draft-results" id="draft-results" aria-live="polite" hidden></section>
+        </div>
       </section>
       <section id="sigma-page" class="page" hidden>
         <div class="page-head"><div><p class="eyebrow">● Tabela społeczności</p><h1>Ranking Sigm</h1><p class="page-note">Zawodnicy z największą liczbą przyznanych punktów.</p></div><div class="sigma-admin-tools admin-only" id="sigma-admin-controls" hidden><select class="sigma-player-select" id="sigma-player-to-add" aria-label="Wybierz zawodnika do rankingu"></select><button class="sigma-adjust" id="sigma-add-player">＋ Dodaj z 1 pkt</button></div></div>
@@ -721,7 +794,14 @@
   </div>
   <script>
     let registeredPlayers = ["m0NESY", "NiKo", "ropz", "b1t", "Snax", "donk", "ZywOo", "siuhy", "frozen", "JL"];
+    let availableMaps = ["Ancient", "Anubis", "Dust2", "Inferno", "Mirage", "Nuke", "Train", "Vertigo"];
     let sigmaPoints = {};
+    let playerTiers = {};
+    let draftSelectedPlayers = new Set();
+    let draftTeams = null;
+    let draftIsDrawing = false;
+    let draftAnimationMode = "reveal";
+    let draftRevealCount = 0;
 
     let matches = [
       {
@@ -788,12 +868,20 @@
       kills: (a, b) => b.kills - a.kills,
       winRate: (a, b) => b.winRate - a.winRate
     };
+    function minimumRankingGames() {
+      return Math.max(1, Math.round(matches.length * 0.25));
+    }
+    function rankingEligiblePlayers() {
+      const minimumGames = minimumRankingGames();
+      return players.filter(player => player.games >= minimumGames);
+    }
     const initials = name => name.slice(0, 2).toUpperCase();
     const playerCell = player => `<div class="player-cell"><span class="player-avatar">${initials(player.name)}</span><span class="player-name">${player.name}</span></div>`;
     const matchWinner = match => match.scoreA > match.scoreB ? match.a : match.b;
 
     function renderOverview() {
       const star = byAdr[0];
+      const rankingPlayers = rankingEligiblePlayers().sort((a, b) => b.adr - a.adr);
       const totalKills = matches.reduce((total, match) => total + Object.values(match.stats || {}).reduce((matchKills, stats) => matchKills + Number(stats[0] || 0), 0), 0);
       const mapCounts = matches.reduce((counts, match) => {
         counts[match.map] = (counts[match.map] || 0) + 1;
@@ -830,13 +918,19 @@
       }).join("");
       document.getElementById("stat-match-count").textContent = matches.length;
       document.getElementById("stat-player-count").textContent = registeredPlayers.length;
-      document.getElementById("top-players").innerHTML = `<p class="leader-intro">Najlepsi strzelcy według współczynnika K/D oraz obrażeń na rundę (ADR).</p>${byAdr.slice(0, 5).map((player, index) => `<div class="leader-row"><span class="leader-rank">#${index + 1}</span><span class="leader-name">${player.name}<span class="leader-team">${player.games} rozegrane mecze</span></span><span class="leader-values"><span><span class="leader-value-label">ADR</span><strong class="leader-adr">${player.adr.toFixed(1)}</strong></span><span><span class="leader-value-label">K/D</span><strong class="leader-kd">${player.kd}</strong></span></span></div>`).join("")}`;
+      document.getElementById("top-players").innerHTML = rankingPlayers.length
+        ? `<p class="leader-intro">Najlepsi strzelcy według współczynnika K/D oraz obrażeń na rundę (ADR).</p>${rankingPlayers.slice(0, 5).map((player, index) => `<div class="leader-row"><span class="leader-rank">#${index + 1}</span><span class="leader-name">${player.name}<span class="leader-team">${player.games} rozegrane mecze</span></span><span class="leader-values"><span><span class="leader-value-label">ADR</span><strong class="leader-adr">${player.adr.toFixed(1)}</strong></span><span><span class="leader-value-label">K/D</span><strong class="leader-kd">${player.kd}</strong></span></span></div>`).join("")}`
+        : `<p class="leader-intro">Ranking pojawi się po rozegraniu minimum ${minimumRankingGames()} meczów.</p>`;
     }
 
     function renderPlayers(query = "") {
       const filtered = players.filter(player => player.name.toLowerCase().includes(query.toLowerCase()));
       const table = document.getElementById("players-table");
-      table.innerHTML = filtered.length ? filtered.map(player => `<tr><td>${playerCell(player)}</td><td class="games-cell"><strong>${player.games}</strong><small>(${player.wins}W - ${player.games - player.wins}L)</small></td><td class="kda-cell">${player.kills} / ${player.deaths} / ${player.assists}</td><td><span class="kd-pill ${Number(player.kd) < 0.8 ? "low" : Number(player.kd) < 1 ? "neutral" : ""}">${player.kd}</span></td><td class="players-adr">${player.adr.toFixed(1)}</td><td class="winrate-cell"><span class="winrate-wrap"><span class="winrate-bar"><span style="width:${player.winRate}%"></span></span><span class="winrate-value">${player.winRate}%</span></span></td><td><span class="player-actions-wrap"><button class="player-action" data-player-details="${player.name}">Szczegóły</button>${isAdmin ? `<button class="admin-delete" data-delete-player="${player.name}" aria-label="Usuń ${player.name}">Usuń</button>` : ""}</span></td></tr>`).join("") : `<tr><td colspan="7"><div class="empty-state">Nie znaleziono zawodnika.</div></td></tr>`;
+      table.innerHTML = filtered.length ? filtered.map(player => {
+        const tier = playerTiers[player.name] ?? 2;
+        const tierCell = isAdmin ? `<td class="tier-cell"><select class="player-tier-select" data-player-tier="${player.name}" aria-label="Tier zawodnika ${player.name}"><option value="1" ${tier === 1 ? "selected" : ""}>Tier 1 · 1,5</option><option value="2" ${tier === 2 ? "selected" : ""}>Tier 2 · 1,0</option><option value="3" ${tier === 3 ? "selected" : ""}>Tier 3 · 0,5</option><option value="4" ${tier === 4 ? "selected" : ""}>Tier 4 · 0,25</option></select></td>` : "";
+        return `<tr><td>${playerCell(player)}</td><td class="games-cell"><strong>${player.games}</strong><small>(${player.wins}W - ${player.games - player.wins}L)</small></td><td class="kda-cell">${player.kills} / ${player.deaths} / ${player.assists}</td><td><span class="kd-pill ${Number(player.kd) < 0.8 ? "low" : Number(player.kd) < 1 ? "neutral" : ""}">${player.kd}</span></td><td class="players-adr">${player.adr.toFixed(1)}</td><td class="winrate-cell"><span class="winrate-wrap"><span class="winrate-bar"><span style="width:${player.winRate}%"></span></span><span class="winrate-value">${player.winRate}%</span></span></td>${tierCell}<td><span class="player-actions-wrap"><button class="player-action" data-player-details="${player.name}">Szczegóły</button>${isAdmin ? `<button class="admin-delete" data-delete-player="${player.name}" aria-label="Usuń ${player.name}">Usuń</button>` : ""}</span></td></tr>`;
+      }).join("") : `<tr><td colspan="${isAdmin ? 8 : 7}"><div class="empty-state">Nie znaleziono zawodnika.</div></td></tr>`;
     }
 
     function closePlayerDetails() {
@@ -855,7 +949,7 @@
     }
 
     function renderRanking() {
-      const rankedPlayers = [...players].sort((a, b) => rankingSortComparators[rankingSort](a, b) || b.adr - a.adr).slice(0, 10);
+      const rankedPlayers = rankingEligiblePlayers().sort((a, b) => rankingSortComparators[rankingSort](a, b) || b.adr - a.adr).slice(0, 10);
       const podiumPlayers = [rankedPlayers[1] && { player: rankedPlayers[1], position: 2 }, rankedPlayers[0] && { player: rankedPlayers[0], position: 1 }, rankedPlayers[2] && { player: rankedPlayers[2], position: 3 }].filter(Boolean);
       document.getElementById("ranking-heading-metric").textContent = rankingSort === "adr" ? "ŚREDNI ADR" : rankingSortLabels[rankingSort];
       document.getElementById("ranking-sort-label").textContent = rankingSortLabels[rankingSort];
@@ -868,6 +962,10 @@
         const medal = position === 1 ? "♛" : position === 2 ? "🥈" : "🥉";
         return `<article class="podium-card position-${position}"><span class="podium-ribbon">${medal} ${position}. MIEJSCE</span><span class="podium-avatar">${player.name}</span><div><h2 class="podium-name">${player.name}</h2></div><div class="podium-stats"><div class="podium-stat"><span>Średni ADR</span><strong>${player.adr.toFixed(1)}</strong></div><div class="podium-stat"><span>K/D</span><strong class="podium-kd">${player.kd}</strong></div></div></article>`;
       }).join("");
+      if (!rankedPlayers.length) {
+        document.getElementById("ranking-table").innerHTML = `<tr><td colspan="7"><div class="empty-state">Ranking pojawi się po rozegraniu minimum ${minimumRankingGames()} meczów.</div></td></tr>`;
+        return;
+      }
       document.getElementById("ranking-table").innerHTML = rankedPlayers.map((player, index) => {
         const position = index + 1;
         const rankClass = position === 1 ? "first" : position === 2 ? "second" : position === 3 ? "third" : "";
@@ -891,6 +989,125 @@
         : `<tr><td colspan="4"><div class="empty-state">W rankingu pojawią się zawodnicy po przyznaniu im pierwszego punktu.</div></td></tr>`;
     }
 
+    function renderDraft() {
+      const selectedCount = draftSelectedPlayers.size;
+      const playerList = document.getElementById("draft-player-list");
+      playerList.innerHTML = registeredPlayers.length
+        ? [...registeredPlayers].sort((a, b) => a.localeCompare(b)).map(name => {
+          const selected = draftSelectedPlayers.has(name);
+          const disabled = draftIsDrawing || (selectedCount >= 10 && !selected);
+          return `<button class="draft-player-option ${selected ? "selected" : ""}" type="button" data-draft-player="${name}" aria-pressed="${selected}" ${disabled ? "disabled" : ""}><span>${name}</span><span>${selected ? "WYBRANO" : "＋"}</span></button>`;
+        }).join("")
+        : `<p class="empty-state">Brak zarejestrowanych zawodników.</p>`;
+      document.getElementById("draft-selected-count").textContent = `${selectedCount} / 10`;
+      document.getElementById("draft-selection-hint").textContent = draftIsDrawing ? draftAnimationMode === "reveal" ? "Odkrywanie składów…" : "Mieszanie składów…" : selectedCount === 10 ? "Gotowe do losowania" : `Wybierz jeszcze ${10 - selectedCount} graczy`;
+      document.getElementById("draft-draw").disabled = draftIsDrawing || selectedCount !== 10;
+      document.getElementById("draft-clear").disabled = draftIsDrawing;
+      document.querySelectorAll("[data-draft-mode]").forEach(button => {
+        button.disabled = draftIsDrawing;
+        button.setAttribute("aria-pressed", String(button.dataset.draftMode === draftAnimationMode));
+      });
+      const results = document.getElementById("draft-results");
+      results.hidden = !draftTeams || draftTeams.length === 0;
+      results.classList.toggle("drawing", draftIsDrawing);
+      results.dataset.animation = draftAnimationMode;
+      if (!draftTeams) {
+        results.innerHTML = "";
+        return;
+      }
+      results.innerHTML = `<header class="draft-results-head"><h2>${draftIsDrawing ? draftAnimationMode === "shuffle" ? "Mieszanie składów" : "Odkrywanie składów" : "Wylosowane drużyny"}</h2><span>${draftIsDrawing ? "Losowanie w toku…" : "10 zawodników · 2 składy"}</span></header>${draftIsDrawing ? `<div class="draft-spin-progress"><span></span></div>` : ""}<div class="draft-teams" aria-hidden="${draftIsDrawing}">${draftTeams.map((team, index) => `<section class="draft-team"><h3>Drużyna ${index === 0 ? "A" : "B"}</h3><ol>${team.map((name, playerIndex) => { const revealIndex = index * 5 + playerIndex; const revealed = !draftIsDrawing || draftAnimationMode !== "reveal" || revealIndex < draftRevealCount; return `<li data-draft-reveal-index="${revealIndex}" class="${revealed ? "" : "draft-player-hidden"}">${revealed ? name : "•••"}</li>`; }).join("")}</ol></section>`).join("")}</div><div class="draft-reroll-row"><button class="draft-button primary" id="draft-reroll" type="button" ${draftIsDrawing ? "disabled" : ""}>${draftIsDrawing ? "Losowanie…" : "Losuj ponownie"}</button></div>`;
+    }
+
+    function shuffledDraftTeams() {
+      const shuffled = [...draftSelectedPlayers];
+      for (let index = shuffled.length - 1; index > 0; index--) {
+        const swapIndex = Math.floor(Math.random() * (index + 1));
+        [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+      }
+      return [shuffled.slice(0, 5), shuffled.slice(5, 10)];
+    }
+
+    function updateDraftTeamNames() {
+      document.querySelectorAll("#draft-results .draft-team ol").forEach((list, index) => {
+        list.innerHTML = draftTeams[index].map(name => `<li>${name}</li>`).join("");
+      });
+    }
+
+    function revealNextDraftPlayer() {
+      const revealIndex = draftRevealCount++;
+      const teamIndex = Math.floor(revealIndex / 5);
+      const teamList = document.querySelectorAll("#draft-results .draft-team ol")[teamIndex];
+      const playerRow = teamList?.querySelector(`[data-draft-reveal-index="${revealIndex}"]`);
+      if (!playerRow) return;
+      playerRow.textContent = draftTeams[teamIndex][revealIndex % 5];
+      playerRow.classList.remove("draft-player-hidden");
+      playerRow.classList.add("draft-player-revealed");
+    }
+
+    async function drawDraftTeams() {
+      if (draftSelectedPlayers.size !== 10 || draftIsDrawing) return;
+      draftIsDrawing = true;
+      draftTeams = [[], []];
+      draftRevealCount = 0;
+      renderDraft();
+      try {
+        const result = await apiRequest("/api/draft/balance", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ players: [...draftSelectedPlayers] })
+        });
+        draftTeams = [result.teams.a, result.teams.b];
+        showAppAlert("");
+      } catch (error) {
+        draftIsDrawing = false;
+        draftTeams = null;
+        renderDraft();
+        showAppAlert(error.message);
+        return;
+      }
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        draftIsDrawing = false;
+        draftRevealCount = 10;
+        renderDraft();
+        return;
+      }
+      draftRevealCount = draftAnimationMode === "reveal" ? 0 : 10;
+      renderDraft();
+      if (draftAnimationMode === "reveal") {
+        let revealRound = 0;
+        const reveal = () => {
+          revealNextDraftPlayer();
+          revealRound++;
+          if (revealRound === 10) {
+            window.setTimeout(() => {
+              draftIsDrawing = false;
+              renderDraft();
+            }, 480);
+            return;
+          }
+          window.setTimeout(reveal, 220);
+        };
+        window.setTimeout(reveal, 220);
+        return;
+      }
+      let shuffleRound = 0;
+      const shuffle = () => {
+        draftTeams = shuffledDraftTeams();
+        updateDraftTeamNames();
+        shuffleRound++;
+        if (shuffleRound === 11) {
+          window.setTimeout(() => {
+            draftTeams = shuffledDraftTeams();
+            draftIsDrawing = false;
+            renderDraft();
+          }, 240);
+          return;
+        }
+        window.setTimeout(shuffle, 70 + shuffleRound * 17);
+      };
+      window.setTimeout(shuffle, 70);
+    }
+
     function matchPlayerRow(name, match, omega = false) {
       const [kills, deaths, assists, adr, savedHeadshots] = match.stats[name];
       const kd = deaths ? kills / deaths : 0;
@@ -911,7 +1128,7 @@
       const lineups = match.lineups || { a: Object.keys(match.stats || {}).slice(0, 5), b: Object.keys(match.stats || {}).slice(5, 10) };
       const teams = { [match.a]: lineups.a, [match.b]: lineups.b };
       const modal = document.getElementById("scoreboard-modal");
-      modal.innerHTML = `<section class="scoreboard-card" role="dialog" aria-modal="true" aria-labelledby="scoreboard-title"><header class="scoreboard-header"><div><div class="scoreboard-meta"><span class="scoreboard-kicker">COMPETITIVE 5V5</span><time class="scoreboard-date">${match.date}</time></div><h2 class="scoreboard-map" id="scoreboard-title">DE_${match.map.toUpperCase()}</h2></div><div class="scoreboard-result"><div><span>${match.a}</span><strong>${match.scoreA}</strong></div><b>:</b><div><span class="omega">${match.b}</span><strong>${match.scoreB}</strong></div></div><button class="scoreboard-close" data-close-scoreboard aria-label="Zamknij scoreboard">×</button></header><div class="scoreboard-body">${[match.a, match.b].map((team, index) => { const isOmega = index === 1; const won = winner === team; const orderedPlayers = teams[team].filter(name => match.stats?.[name]).sort((a, b) => Number(match.stats[b][3]) - Number(match.stats[a][3])); return `<section><div class="scoreboard-team-heading ${isOmega ? "omega-heading" : ""}"><span class="team-marker"></span><span>${isOmega ? "DRUŻYNA B (TERRORISTS)" : "DRUŻYNA A (COUNTER-TERRORISTS)"}</span><span class="team-result ${won ? "" : "lost"}">${won ? "ZWYCIĘZCY" : "PRZEGRANI"}</span></div><div class="scoreboard-table-wrap"><table class="scoreboard-table ${isOmega ? "omega-table" : ""}"><thead><tr><th>GRACZ</th><th>KILLS</th><th>DEATHS</th><th>ASSISTS</th><th>K/D</th><th>HS%</th><th>ADR</th></tr></thead><tbody>${orderedPlayers.map(name => matchPlayerRow(name, match, isOmega)).join("")}</tbody></table></div></section>`; }).join("")}</div><footer class="scoreboard-footer"><button class="archive-action" data-close-scoreboard>Zamknij</button></footer></section>`;
+      modal.innerHTML = `<section class="scoreboard-card" role="dialog" aria-modal="true" aria-labelledby="scoreboard-title"><header class="scoreboard-header"><div><div class="scoreboard-meta"><span class="scoreboard-kicker">COMPETITIVE 5V5</span><time class="scoreboard-date">${match.date}</time></div><h2 class="scoreboard-map" id="scoreboard-title">DE_${match.map.toUpperCase()}</h2></div><div class="scoreboard-result"><div><span>${match.a}</span><strong>${match.scoreA}</strong></div><b>:</b><div><span class="omega">${match.b}</span><strong>${match.scoreB}</strong></div></div><button class="scoreboard-close" data-close-scoreboard aria-label="Zamknij scoreboard">×</button></header><div class="scoreboard-body">${[match.a, match.b].map((team, index) => { const isOmega = index === 1; const won = winner === team; const orderedPlayers = teams[team].filter(name => match.stats?.[name]).sort((a, b) => Number(match.stats[b][3]) - Number(match.stats[a][3])); return `<section><div class="scoreboard-team-heading ${isOmega ? "omega-heading" : ""}"><span class="team-marker"></span><span>${isOmega ? "DRUŻYNA B (TERRORISTS)" : "DRUŻYNA A (COUNTER-TERRORISTS)"}</span><span class="team-result ${won ? "" : "lost"}">${won ? "ZWYCIĘZCY" : "PRZEGRANI"}</span></div><div class="scoreboard-table-wrap"><table class="scoreboard-table ${isOmega ? "omega-table" : ""}"><thead><tr><th>GRACZ</th><th>KILLS</th><th>DEATHS</th><th>ASSISTS</th><th>K/D</th><th>HS%</th><th>ADR</th></tr></thead><tbody>${orderedPlayers.map(name => matchPlayerRow(name, match, isOmega)).join("")}</tbody></table></div></section>`; }).join("")}</div><footer class="scoreboard-footer">${isAdmin ? `<button class="archive-action" data-edit-match="${match.id}">Edytuj mecz</button>` : ""}<button class="archive-action" data-close-scoreboard>Zamknij</button></footer></section>`;
       modal.hidden = false;
       modal.querySelector("[data-close-scoreboard]").focus();
     }
@@ -949,6 +1166,7 @@
       renderOverview();
       renderPlayers(document.getElementById("player-search").value);
       renderRanking();
+      renderDraft();
       renderSigmaRanking();
       renderArchive();
       updateAdminControls();
@@ -957,6 +1175,7 @@
     async function refreshState() {
       const remoteState = await apiRequest("/api/state");
       registeredPlayers = remoteState.players;
+      playerTiers = remoteState.playerTiers || {};
       sigmaPoints = remoteState.sigmaPoints || {};
       matches = remoteState.matches;
       isAdmin = remoteState.isAdmin;
@@ -987,19 +1206,19 @@
       modal.querySelector("input[name=name]").focus();
     }
 
-    function renderMatchForm() {
+    function renderMatchForm(match = null) {
       if (registeredPlayers.length < 10) {
         showAppAlert("Mecz 5v5 wymaga co najmniej 10 zawodników. Dodaj graczy w zakładce Zawodnicy.");
         return;
       }
       const modal = document.getElementById("admin-modal");
       const today = new Date().toISOString().slice(0, 10);
-      const mapOptions = ["Ancient", "Anubis", "Dust2", "Inferno", "Mirage", "Nuke", "Train", "Vertigo"].map(map => `<option>${map}</option>`).join("");
+      const mapOptions = [...availableMaps.map(map => `<option ${match?.map === map ? "selected" : ""}>${map}</option>`), `<option value="__add_map__">＋ Dodaj nową mapę…</option>`].join("");
       const metrics = [["kills", "K", 1000, 1], ["deaths", "D", 1000, 1], ["assists", "A", 1000, 1], ["headshots", "HS%", 100, 1], ["adr", "ADR", 10000, 0.1]];
       const rosterGroups = ["a", "b"].map(side => `<section class="match-stat-group"><div class="match-roster-tools"><h3>Skład ${side.toUpperCase()} <span class="lineup-count" data-lineup-count="${side}">0 / 5</span></h3><label class="match-roster-search"><span aria-hidden="true">⌕</span><input type="search" data-lineup-search="${side}" placeholder="Szukaj gracza..." aria-label="Szukaj gracza do składu ${side.toUpperCase()}"></label></div><div class="player-picker-results" data-player-results="${side}" role="listbox" aria-label="Wybór gracza do składu ${side.toUpperCase()}"></div><div class="match-stat-row match-stat-head"><span>Zawodnik</span>${metrics.map(([, label]) => `<span>${label}</span>`).join("")}</div><div data-selected-players="${side}"></div></section>`).join("");
-      const lineups = { a: [], b: [] };
+      const lineups = match?.lineups || { a: Object.keys(match?.stats || {}).slice(0, 5), b: Object.keys(match?.stats || {}).slice(5, 10) };
       const searchTerms = { a: "", b: "" };
-      modal.innerHTML = `<section class="admin-modal-card wide" role="dialog" aria-modal="true" aria-labelledby="admin-modal-title"><header class="admin-modal-head"><div><h2 id="admin-modal-title">Dodaj mecz 5v5</h2><p>Podaj nazwy drużyn, wybierz po 5 graczy i wpisz ich statystyki.</p></div><button class="admin-modal-close" data-close-admin aria-label="Zamknij">×</button></header><form class="admin-form" id="match-create-form"><div class="admin-form-grid"><label class="admin-field">Data<input name="date" type="date" value="${today}" required></label><label class="admin-field">Mapa<select name="map">${mapOptions}</select></label><label class="admin-field">Nazwa drużyny A<input name="teamA" maxlength="32" placeholder="np. Red Dragons" required></label><label class="admin-field">Nazwa drużyny B<input name="teamB" maxlength="32" placeholder="np. Night Owls" required></label><label class="admin-field">Wynik drużyny A<input name="scoreA" type="number" min="0" max="99" value="13" required></label><label class="admin-field">Wynik drużyny B<input name="scoreB" type="number" min="0" max="99" value="8" required></label></div><p class="admin-help">W każdym składzie zaznacz dokładnie 5 różnych zawodników. Statystyki wpisujesz osobno dla tego meczu.</p><div class="admin-rosters">${rosterGroups}</div><p class="admin-error" role="alert"></p><div class="admin-form-actions"><button type="button" class="admin-secondary" data-close-admin>Anuluj</button><button class="admin-primary" type="submit">Zapisz mecz</button></div></form></section>`;
+      modal.innerHTML = `<section class="admin-modal-card wide" role="dialog" aria-modal="true" aria-labelledby="admin-modal-title"><header class="admin-modal-head"><div><h2 id="admin-modal-title">${match ? "Edytuj mecz 5v5" : "Dodaj mecz 5v5"}</h2><p>Podaj nazwy drużyn, wybierz po 5 graczy i wpisz ich statystyki.</p></div><button class="admin-modal-close" data-close-admin aria-label="Zamknij">×</button></header><form class="admin-form" id="match-create-form" ${match ? `data-match-id="${match.id}"` : ""}><div class="admin-form-grid"><label class="admin-field">Data<input name="date" type="date" value="${match?.date || today}" required></label><label class="admin-field">Mapa<select name="map">${mapOptions}</select></label><label class="admin-field">Nazwa drużyny A<input name="teamA" maxlength="32" placeholder="np. Red Dragons" value="${match?.a || ""}" required></label><label class="admin-field">Nazwa drużyny B<input name="teamB" maxlength="32" placeholder="np. Night Owls" value="${match?.b || ""}" required></label><label class="admin-field">Wynik drużyny A<input name="scoreA" type="number" min="0" max="99" value="${match?.scoreA ?? 13}" required></label><label class="admin-field">Wynik drużyny B<input name="scoreB" type="number" min="0" max="99" value="${match?.scoreB ?? 8}" required></label></div><p class="admin-help">W każdym składzie zaznacz dokładnie 5 różnych zawodników. Statystyki wpisujesz osobno dla tego meczu.</p><div class="admin-rosters">${rosterGroups}</div><p class="admin-error" role="alert"></p><div class="admin-form-actions"><button type="button" class="admin-secondary" data-close-admin>Anuluj</button><button class="admin-primary" type="submit">${match ? "Zapisz zmiany" : "Zapisz mecz"}</button></div></form></section>`;
       modal.hidden = false;
       const renderLineupSide = side => {
         const selectedPlayers = lineups[side];
@@ -1011,7 +1230,10 @@
         results.innerHTML = availablePlayers.length
           ? availablePlayers.map(name => `<button type="button" class="player-option" role="option" data-pick-player="${name}" data-picker-side="${side}">＋ ${name}</button>`).join("")
           : `<span class="player-option-empty">${query ? "Brak pasujących graczy." : "Wszyscy gracze są już w lineupie."}</span>`;
-        selected.innerHTML = selectedPlayers.map((name, index) => `<div class="match-stat-row"><input type="hidden" name="lineup.${side}" value="${name}"><label class="selected-player-name"><span>${index + 1}. ${name}</span><button type="button" class="remove-lineup-player" data-remove-player="${name}" data-picker-side="${side}" aria-label="Usuń ${name} ze składu">×</button></label>${metrics.map(([metric, label, max, step]) => `<input aria-label="${name} ${label}" name="stat.${side}.${name}.${metric}" type="number" min="0" max="${max}" step="${step}" value="${metric === "headshots" ? 40 : 0}" required>`).join("")}</div>`).join("");
+        selected.innerHTML = selectedPlayers.map((name, index) => {
+          const statIndexes = { kills: 0, deaths: 1, assists: 2, adr: 3, headshots: 4 };
+          return `<div class="match-stat-row"><input type="hidden" name="lineup.${side}" value="${name}"><label class="selected-player-name"><span>${index + 1}. ${name}</span><button type="button" class="remove-lineup-player" data-remove-player="${name}" data-picker-side="${side}" aria-label="Usuń ${name} ze składu">×</button></label>${metrics.map(([metric, label, max, step]) => `<input aria-label="${name} ${label}" name="stat.${side}.${name}.${metric}" type="number" min="0" max="${max}" step="${step}" value="${match?.stats?.[name]?.[statIndexes[metric]] ?? (metric === "headshots" ? 40 : 0)}" required>`).join("")}</div>`;
+        }).join("");
         modal.querySelector(`[data-lineup-count="${side}"]`).textContent = `${selectedPlayers.length} / 5`;
       };
       modal.oninput = event => {
@@ -1123,8 +1345,9 @@
               stats[name] = ["kills", "deaths", "assists", "adr", "headshots"].map(metric => Number(values.get(`stat.${side}.${name}.${metric}`)));
             }
           }
-          await apiRequest("/api/admin/matches", {
-            method: "POST",
+          const matchId = form.dataset.matchId;
+          await apiRequest(matchId ? `/api/admin/matches/${matchId}` : "/api/admin/matches", {
+            method: matchId ? "PUT" : "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               date: values.get("date"), map: values.get("map"), a: values.get("teamA"), b: values.get("teamB"),
@@ -1154,6 +1377,25 @@
       if (button) navigate(button.dataset.page);
     });
     document.addEventListener("click", event => {
+      const draftModeButton = event.target.closest("[data-draft-mode]");
+      if (draftModeButton && !draftIsDrawing) {
+        draftAnimationMode = draftModeButton.dataset.draftMode;
+        renderDraft();
+      }
+      const draftPlayerButton = event.target.closest("[data-draft-player]");
+      if (draftPlayerButton) {
+        const name = draftPlayerButton.dataset.draftPlayer;
+        if (draftSelectedPlayers.has(name)) draftSelectedPlayers.delete(name);
+        else if (draftSelectedPlayers.size < 10) draftSelectedPlayers.add(name);
+        draftTeams = null;
+        renderDraft();
+      }
+      if (event.target.closest("#draft-draw, #draft-reroll")) drawDraftTeams();
+      if (event.target.closest("#draft-clear")) {
+        draftSelectedPlayers.clear();
+        draftTeams = null;
+        renderDraft();
+      }
       if (event.target.closest("#sigma-add-player")) {
         const selectedPlayer = document.getElementById("sigma-player-to-add").value;
         if (selectedPlayer) changeSigmaPoints(selectedPlayer, 1);
@@ -1180,6 +1422,12 @@
         showMatch(matchRow.dataset.match);
       }
       if (event.target.closest("[data-close-scoreboard]")) closeScoreboard();
+      const editMatchButton = event.target.closest("[data-edit-match]");
+      if (editMatchButton) {
+        const match = matches.find(item => item.id === Number(editMatchButton.dataset.editMatch));
+        closeScoreboard();
+        if (match && isAdmin) renderMatchForm(match);
+      }
       if (event.target.id === "scoreboard-modal") closeScoreboard();
       const playerDetailsButton = event.target.closest("[data-player-details]");
       if (playerDetailsButton) showPlayerDetails(playerDetailsButton.dataset.playerDetails);
@@ -1202,6 +1450,64 @@
         closeScoreboard();
         closePlayerDetails();
         closeAdminModal();
+      }
+    });
+    document.addEventListener("focusin", event => {
+      const mapSelect = event.target.closest('#match-create-form select[name="map"]');
+      if (mapSelect && mapSelect.value !== "__add_map__") mapSelect.dataset.currentMap = mapSelect.value;
+    });
+    document.addEventListener("change", async event => {
+      const tierSelect = event.target.closest("[data-player-tier]");
+      if (tierSelect) {
+        const name = tierSelect.dataset.playerTier;
+        const previousTier = playerTiers[name] ?? 2;
+        tierSelect.disabled = true;
+        try {
+          const result = await apiRequest(`/api/admin/players/${encodeURIComponent(name)}/tier`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ tier: Number(tierSelect.value) })
+          });
+          playerTiers[name] = result.tier;
+          showAppAlert("");
+        } catch (error) {
+          tierSelect.value = String(previousTier);
+          showAppAlert(error.message);
+        } finally {
+          tierSelect.disabled = false;
+        }
+        return;
+      }
+      const mapSelect = event.target.closest('#match-create-form select[name="map"]');
+      if (!mapSelect) return;
+      if (mapSelect.value !== "__add_map__") {
+        mapSelect.dataset.currentMap = mapSelect.value;
+        return;
+      }
+      const previousMap = mapSelect.dataset.currentMap || availableMaps[0];
+      const name = window.prompt("Podaj nazwę nowej mapy:");
+      if (!name?.trim()) {
+        mapSelect.value = previousMap;
+        return;
+      }
+      try {
+        const result = await apiRequest("/api/admin/maps", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name })
+        });
+        availableMaps = result.maps;
+        const option = document.createElement("option");
+        option.value = result.map;
+        option.textContent = result.map;
+        const addMapOption = mapSelect.querySelector('option[value="__add_map__"]');
+        mapSelect.add(option, addMapOption);
+        mapSelect.value = result.map;
+        mapSelect.dataset.currentMap = result.map;
+        showAppAlert("");
+      } catch (error) {
+        mapSelect.value = previousMap;
+        showAppAlert(error.message);
       }
     });
     document.addEventListener("submit", handleAdminSubmit);

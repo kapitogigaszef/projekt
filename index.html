@@ -207,7 +207,7 @@
     .feature-team { color: var(--lime); font-size: 10px; font-weight: 800; text-transform: uppercase; }
     .feature-stats { grid-template-columns: repeat(4,minmax(0,1fr)); gap: 8px; margin-top: 17px; }
     .feature-stat { min-height: 52px; padding: 8px 9px; border-radius: 7px; background: #10131a; }
-    .stat-label { font-size: 8px; letter-spacing: .2px; text-transform: none; }
+      .stat-label { font-size: 8px; letter-spacing: .2px; text-transform: none; }
     .stat-value { font-family: var(--font-body); font-size: 13px; font-weight: 800; }
     .feature-stats .feature-stat:nth-child(2) .stat-value { color: #38d49a; }
     .feature-meta { display: flex; justify-content: space-between; gap: 12px; margin-top: 17px; padding-top: 12px; border-top: 1px solid var(--line); color: #9dadc2; font-size: 9px; }
@@ -411,31 +411,110 @@
     .winrate-value { min-width: 28px; color: #d4dcec; font-size: 9px; }
     .player-action { border: 0; border-radius: 4px; padding: 6px 9px; background: #202432; color: #cbd5e5; cursor: pointer; font-size: 8px; font-weight: 700; }
     .player-action:hover { background: #2c3445; color: white; }
-    .player-modal-overlay { position: fixed; z-index: 21; inset: 0; display: grid; place-items: center; overflow-y: auto; padding: 20px; background: #080a0ee8; backdrop-filter: blur(5px); }
-    .player-modal-card { width: min(460px,100%); overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: #171a23; box-shadow: 0 24px 70px #0009; }
-    .player-modal-head { display: flex; align-items: center; gap: 13px; padding: 20px; border-bottom: 1px solid var(--line); }
-    .player-modal-avatar { display: grid; flex: 0 0 58px; place-items: center; width: 58px; height: 58px; border: 1px solid #9a4b15; border-radius: 12px; background: #20232d; color: #ffad1f; font-family: var(--font-display); font-size: 15px; font-weight: 700; }
-    .player-modal-name { margin: 0 0 5px; font-size: 17px; font-weight: 800; }
-    .player-modal-x { margin-left: auto; align-self: start; border: 0; background: transparent; color: #93a0b5; cursor: pointer; font-size: 20px; }
-    .player-modal-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 9px; padding: 17px 20px; }
-    .player-modal-stat { border: 1px solid var(--line); border-radius: 9px; padding: 12px 7px; background: #1c202b; text-align: center; }
-    .player-modal-stat span { display: block; margin-bottom: 6px; color: #95a3b7; font-size: 8px; font-weight: 700; text-transform: uppercase; }
-    .player-modal-stat strong { font-size: 15px; font-weight: 800; }
-    .player-modal-stat .kd-highlight { color: #36d19b; }
-    .player-modal-stat .adr-highlight { color: #ffae20; }
-    .player-modal-list { margin: 0 20px 18px; border: 1px solid var(--line); border-radius: 9px; padding: 9px 13px; background: #10131a; }
-    .player-modal-row { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px solid #252b38; color: #98a6bb; font-size: 9px; }
-    .player-modal-row:last-child { border-bottom: 0; }
-    .player-modal-row strong { color: #eef2f8; font-size: 9px; text-align: right; }
-    .player-modal-footer { display: flex; justify-content: end; padding: 12px 15px; border-top: 1px solid var(--line); }
+    .profile-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 18px; }
+    .profile-back { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; border: 1px solid #303747; border-radius: 6px; padding: 0 12px; background: #171a23; color: #c3ccda; cursor: pointer; font-size: 10px; font-weight: 700; transition: border-color .16s ease,color .16s ease,transform .16s ease; }
+    .profile-back:hover { transform: translateX(-2px); border-color: #ff7800; color: white; }
+    .profile-compare-button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 36px; border: 1px solid #8a4b18; border-radius: 6px; padding: 0 13px; background: linear-gradient(110deg,#3a2818,#26212a); color: #ffb13a; cursor: pointer; font-size: 10px; font-weight: 800; transition: border-color .16s ease,background .16s ease,transform .16s ease; }
+    .profile-compare-button:hover { transform: translateY(-1px); border-color: #ff9a1f; background: #3b2b1c; }
+    .profile-compare-button:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+    .profile-hero { position: relative; display: flex; justify-content: space-between; align-items: center; gap: 20px; min-height: 174px; overflow: hidden; margin-bottom: 15px; border: 1px solid #483727; border-radius: 12px; padding: 25px 30px; background: linear-gradient(112deg,#22232b 0%,#1d1b20 56%,#2b211b 100%); }
+    .profile-hero::before { position: absolute; top: -90px; right: 18%; width: 1px; height: 350px; transform: rotate(35deg); background: #ff780033; content: ""; }
+    .profile-hero::after { position: absolute; right: 125px; bottom: -43px; color: #ffffff06; content: "CS2"; font-family: var(--font-display); font-size: 150px; font-weight: 800; line-height: 1; pointer-events: none; }
+    .profile-identity { position: relative; z-index: 1; display: flex; align-items: center; gap: 19px; min-width: 0; }
+    .profile-avatar { display: grid; flex: 0 0 78px; place-items: center; width: 78px; height: 78px; border: 1px solid #ba5b13; border-radius: 11px; background: linear-gradient(145deg,#33271f,#1e2028); box-shadow: inset 0 0 22px #ff780014,0 0 24px #ff780012; color: #ffad1f; font-family: var(--font-display); font-size: 24px; font-weight: 800; }
+    .profile-kicker { margin: 0 0 7px; color: #ff9a1f; font-size: 9px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+    .profile-name { margin: 0; overflow-wrap: anywhere; font-family: var(--font-display); font-size: 34px; font-weight: 800; line-height: 1; text-transform: uppercase; }
+    .profile-note { margin: 8px 0 0; color: #a0adc0; font-size: 10px; }
+    .profile-winrate { position: relative; z-index: 1; display: flex; flex: 0 0 120px; flex-direction: column; align-items: center; gap: 7px; border-left: 1px solid #ffffff12; padding-left: 22px; }
+    .profile-ring { display: grid; position: relative; place-items: center; width: 76px; aspect-ratio: 1; border-radius: 50%; background: conic-gradient(from -90deg,#ff8a17 var(--profile-rate),#3b3540 var(--profile-rate)); }
+    .profile-ring::before { position: absolute; inset: 6px; border: 1px solid #ffffff0d; border-radius: inherit; background: #1d1b20; content: ""; }
+    .profile-ring strong { position: relative; color: #ffb32d; font-family: var(--font-display); font-size: 20px; font-weight: 800; }
+    .profile-winrate-label { color: #a2adbd; font-size: 8px; font-weight: 800; letter-spacing: .9px; text-transform: uppercase; }
+    .profile-stats { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 9px; margin-bottom: 26px; }
+    .profile-stat { position: relative; min-width: 0; min-height: 76px; overflow: hidden; border: 1px solid #2b3140; border-radius: 8px; padding: 12px 14px; background: linear-gradient(145deg,#1a1d26,#171a22); transition: border-color .18s ease,transform .18s ease; }
+    .profile-stat:hover { transform: translateY(-2px); border-color: #424b5d; }
+    .profile-stat > span, .profile-stat-label { display: block; margin-bottom: 8px; color: #96a4b9; font-size: 8px; font-weight: 800; letter-spacing: .45px; text-transform: uppercase; }
+    .profile-stat-label { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+    .profile-stat-icon { display: grid; flex: 0 0 25px; place-items: center; width: 25px; height: 25px; border: 1px solid #73501b; border-radius: 6px; background: #30271d; color: #ffb13a; font-size: 13px; line-height: 1; }
+    .profile-stat--deaths .profile-stat-icon { border-color: #633743; background: #2a1e27; color: #f07686; }
+    .profile-stat--assists .profile-stat-icon { border-color: #304c70; background: #1d2735; color: #73a9e8; }
+    .profile-stat strong { display: block; overflow-wrap: anywhere; font-family: var(--font-display); font-size: 21px; font-weight: 700; line-height: 1; }
+    .profile-stat .profile-kda-values { display: flex; align-items: baseline; gap: 5px; white-space: nowrap; font-size: 18px; }
+    .profile-kda-kills, .profile-stat--kills > strong { color: #ffad21; }
+    .profile-kda-deaths, .profile-stat--deaths > strong { color: #f07686; }
+    .profile-kda-assists, .profile-stat--assists > strong { color: #73a9e8; }
+    .profile-kda-separator { color: #778398; }
+    .profile-stat--rate { border-color: #68421f; background: linear-gradient(145deg,#30251b,#1b1b23 76%); }
+    .profile-stat--rate strong, .profile-stat .profile-accent { color: #ffad21; }
+    .profile-stat--kd { border-color: #225541; background: linear-gradient(145deg,#1a2a27,#191d25 76%); }
+    .profile-stat .profile-positive { color: #38d49a; }
+    .profile-section-head { display: flex; justify-content: space-between; align-items: end; gap: 12px; margin-bottom: 12px; }
+    .profile-section-head h2 { margin: 0; font-family: var(--font-display); font-size: 20px; font-weight: 700; text-transform: uppercase; }
+    .profile-section-head p { margin: 0; color: #91a0b6; font-size: 9px; }
+    .profile-map-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 9px; }
+    .profile-map { position: relative; min-width: 0; min-height: 108px; overflow: hidden; border: 1px solid #2b3140; border-radius: 8px; padding: 13px; background: linear-gradient(145deg,#1d202a,#171a23); transition: transform .18s ease,border-color .18s ease,background .18s ease; }
+    .profile-map:hover { transform: translateY(-2px); border-color: #694522; background: linear-gradient(145deg,#25232a,#191b24); }
+    .profile-map::after { position: absolute; top: 0; right: 0; width: 35%; height: 48px; background: repeating-linear-gradient(135deg,transparent 0 8px,#ffffff05 8px 9px); content: ""; pointer-events: none; }
+    .profile-map-head { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 12px; }
+    .profile-map-name { overflow: hidden; color: #e7ebf2; font-family: var(--font-display); font-size: 16px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+    .profile-map-rate { flex: 0 0 auto; color: #ffae20; font-family: var(--font-display); font-size: 17px; font-weight: 700; }
+    .profile-map-track { height: 5px; overflow: hidden; border-radius: 5px; background: #303747; }
+    .profile-map-track span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg,#ffad20,#ff6100); box-shadow: 0 0 9px #ff780055; }
+    .profile-map-record { display: flex; justify-content: space-between; gap: 8px; margin-top: 9px; color: #95a3b7; font-size: 9px; }
+    .profile-map-record strong { color: #dce3ed; }
+    .profile-empty { grid-column: 1 / -1; border: 1px dashed #343b4a; border-radius: 8px; padding: 24px; color: #91a0b6; font-size: 10px; text-align: center; }
+    .admin-modal-card.compare-card { width: min(820px,100%); }
+    .compare-picker { padding: 16px 19px; border-bottom: 1px solid var(--line); }
+    .compare-select { width: min(320px,100%); min-height: 38px; margin-top: 7px; border: 1px solid #68421b; border-radius: 6px; padding: 7px 10px; background: #10131a; color: var(--text); font: inherit; }
+    .compare-result { padding: 18px 19px 20px; }
+    .compare-h2h { display: grid; grid-template-columns: minmax(0,1fr) minmax(125px,.65fr) minmax(0,1fr); align-items: center; gap: 14px; margin-bottom: 17px; border: 1px solid #38313a; border-radius: 9px; padding: 15px; background: linear-gradient(110deg,#20232b,#2a211d); text-align: center; }
+    .compare-player { min-width: 0; overflow-wrap: anywhere; color: #f0f3f8; font-family: var(--font-display); font-size: 20px; font-weight: 700; text-transform: uppercase; }
+    .compare-player:last-child { color: #ffb13a; }
+    .compare-record { border-left: 1px solid #ffffff15; border-right: 1px solid #ffffff15; padding: 0 10px; }
+    .compare-record-label { display: block; color: #a0adbf; font-size: 8px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; }
+    .compare-record-score { display: block; margin: 4px 0; color: #ffb13a; font-family: var(--font-display); font-size: 25px; font-weight: 800; line-height: 1; }
+    .compare-record-note { color: #99a6b8; font-size: 9px; }
+    .compare-table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; }
+    .compare-table { min-width: 0; table-layout: fixed; }
+    .compare-table th, .compare-table td { overflow: hidden; text-overflow: ellipsis; }
+    .compare-table th:first-child, .compare-table td:first-child { width: 42%; white-space: normal; }
+    .compare-table th { height: 36px; padding: 0 12px; border-bottom: 1px solid var(--line); color: #95a3b7; font-size: 8px; }
+    .compare-table th:first-child, .compare-table td:first-child { text-align: left; }
+    .compare-table td { height: 40px; padding: 0 12px; border-top: 1px solid #252b38; font-family: var(--font-display); font-size: 15px; font-weight: 700; }
+    .compare-table td:first-child { color: #95a3b7; font-family: var(--font-body); font-size: 9px; font-weight: 700; }
+    .compare-table .compare-a { color: #dce3ed; text-align: center; }
+    .compare-table .compare-b { color: #ffb13a; text-align: center; }
+    .compare-table .is-better { background: #17362f; box-shadow: inset 3px 0 #36d19b; color: #48dfab; }
+    .compare-empty { border: 1px dashed #3b4352; border-radius: 7px; padding: 15px; color: #9aa8bc; font-size: 10px; text-align: center; }
+    @media (max-width: 600px) {
+      .profile-toolbar { gap: 8px; }
+      .profile-back, .profile-compare-button { min-height: 34px; padding: 0 9px; font-size: 9px; }
+      .compare-picker { padding: 14px; }
+      .compare-result { padding: 14px; }
+      .compare-h2h { grid-template-columns: minmax(0,1fr) 92px minmax(0,1fr); gap: 7px; padding: 11px 7px; }
+      .compare-player { font-size: 15px; }
+      .compare-record { padding: 0 5px; }
+      .compare-record-score { font-size: 21px; }
+    }
     @media (max-width: 600px) {
       #players-page .page-head { align-items: stretch; flex-direction: column; gap: 12px; }
       #players-page .toolbar, #players-page .search-wrap, #players-page .search { width: 100%; }
       .players-table { min-width: 800px; }
-      .player-modal-overlay { padding: 10px; }
-      .player-modal-card { max-height: calc(100vh - 20px); overflow-y: auto; }
-      .player-modal-head, .player-modal-stats { padding-right: 14px; padding-left: 14px; }
-      .player-modal-list { margin-right: 14px; margin-left: 14px; }
+      .profile-stats { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+      .profile-stat { padding: 11px; }
+      .profile-map-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+      .profile-hero { min-height: 145px; padding: 17px; }
+      .profile-identity { gap: 12px; }
+      .profile-avatar { flex-basis: 56px; width: 56px; height: 56px; font-size: 18px; }
+      .profile-name { font-size: 27px; }
+      .profile-winrate { flex-basis: 84px; padding-left: 12px; }
+      .profile-ring { width: 58px; }
+      .profile-ring strong { font-size: 16px; }
+      .profile-hero::after { right: 70px; font-size: 112px; }
+    }
+    @media (max-width: 380px) {
+      .profile-map-grid { grid-template-columns: 1fr; }
+      .profile-section-head { align-items: start; flex-direction: column; }
     }
     #ranking-page .page-head { align-items: center; margin-bottom: 17px; }
     #ranking-page .eyebrow { display: none; }
@@ -541,8 +620,7 @@
     .archive-map-name, .archive-format, .archive-date, .archive-team, .scoreboard-kicker,
     .scoreboard-date, .scoreboard-result span, .scoreboard-team-heading, .team-result,
     .players-table th, .ranking-table th, .ranking-titlebar h2, .ranking-titlebar p,
-    .ranking-count, .podium-ribbon, .podium-stat span,
-    .player-modal-stat span, .player-modal-row, .player-modal-row strong { font-size: 11px; }
+    .ranking-count, .podium-ribbon, .podium-stat span { font-size: 11px; }
     th { font-size: 11px; }
     td { font-size: 13px; }
     .section-heading h2, .leader-name { font-size: 13px; }
@@ -573,9 +651,6 @@
     .ranking-hero p { font-size: 12px; }
     .podium-name { font-size: 13px; }
     .podium-stat strong { font-size: 13px; }
-    .player-modal-stat span { font-size: 10px; }
-    .player-modal-stat strong { font-size: 17px; }
-    .player-modal-row, .player-modal-row strong { font-size: 12px; }
     .search { font-size: 12px; }
     .footer { color: #9aa6ba; font-size: 11px; }
     @media (max-width: 560px) {
@@ -765,6 +840,10 @@
         <div class="page-head"><div><p class="eyebrow">● Sezon 2025 / 26</p><h1>Baza zawodników</h1><p class="page-note">Wszyscy zarejestrowani gracze, wskaźniki K/D, fragi, ADR oraz współczynniki wygranych</p></div><div class="toolbar search-wrap"><button class="archive-action admin-only" id="add-player" hidden>＋ Dodaj zawodnika</button><input class="search" id="player-search" type="search" placeholder="Szukaj gracza (nick)..." aria-label="Szukaj zawodnika"></div></div>
         <section class="card players-card"><div class="table-wrap"><table class="players-table"><thead><tr><th>Zawodnik</th><th>Mecze (W / L)</th><th>K / D / A</th><th>K/D Ratio</th><th>Średni ADR</th><th>Win rate</th><th class="admin-only" hidden>Tier</th><th>Akcja</th></tr></thead><tbody id="players-table"></tbody></table></div></section>
       </section>
+      <section id="player-profile-page" class="page" hidden>
+        <div class="profile-toolbar"><button class="profile-back" type="button" data-profile-back>← Wróć do zawodników</button><button class="profile-compare-button" type="button" data-player-compare>⇄ Porównaj</button></div>
+        <div id="player-profile-content"></div>
+      </section>
       <section id="ranking-page" class="page" hidden>
         <div class="ranking-hero"><span class="ranking-kicker">OFICJALNY RANKING CS2</span><h1>TABELA LIDERÓW (<span id="ranking-heading-metric">ŚREDNI ADR</span>)</h1><p>Główny wskaźnik skuteczności: Average Damage per Round (ADR). Zmień parametr, aby porównać graczy według innych statystyk.</p></div>
         <div class="ranking-podium" id="ranking-podium"></div>
@@ -787,7 +866,7 @@
         <section class="card sigma-card"><div class="ranking-titlebar"><div><h2>KLASYFIKACJA PUNKTÓW</h2><p>Punkty przyznaje administrator ligi.</p></div><span class="ranking-count">TOP GRACZY</span></div><div class="table-wrap"><table class="sigma-table"><thead><tr><th>#</th><th>Zawodnik</th><th>Punkty</th><th>Akcja</th></tr></thead><tbody id="sigma-table"></tbody></table></div></section>
       </section>
       <div class="scoreboard-overlay" id="scoreboard-modal" hidden></div>
-      <div class="player-modal-overlay" id="player-modal" hidden></div>
+      <div class="admin-modal-overlay" id="player-compare-modal" hidden></div>
       <div class="admin-modal-overlay" id="admin-modal" hidden></div>
       <footer class="footer"><span>CS2 5V5 STATS · COMPETITIVE HUB</span><span>Dane przykładowe · sezon 2025 / 26</span></footer>
     </main>
@@ -832,6 +911,7 @@
 
     let players = [];
     let byAdr = [];
+    let currentPlayerProfile = null;
     let isAdmin = false;
     let adminUsername = null;
     let adminConfigured = false;
@@ -929,23 +1009,124 @@
       table.innerHTML = filtered.length ? filtered.map(player => {
         const tier = playerTiers[player.name] ?? 2;
         const tierCell = isAdmin ? `<td class="tier-cell"><select class="player-tier-select" data-player-tier="${player.name}" aria-label="Tier zawodnika ${player.name}"><option value="1" ${tier === 1 ? "selected" : ""}>Tier 1 · 1,5</option><option value="2" ${tier === 2 ? "selected" : ""}>Tier 2 · 1,0</option><option value="3" ${tier === 3 ? "selected" : ""}>Tier 3 · 0,5</option><option value="4" ${tier === 4 ? "selected" : ""}>Tier 4 · 0,25</option></select></td>` : "";
-        return `<tr><td>${playerCell(player)}</td><td class="games-cell"><strong>${player.games}</strong><small>(${player.wins}W - ${player.games - player.wins}L)</small></td><td class="kda-cell">${player.kills} / ${player.deaths} / ${player.assists}</td><td><span class="kd-pill ${Number(player.kd) < 0.8 ? "low" : Number(player.kd) < 1 ? "neutral" : ""}">${player.kd}</span></td><td class="players-adr">${player.adr.toFixed(1)}</td><td class="winrate-cell"><span class="winrate-wrap"><span class="winrate-bar"><span style="width:${player.winRate}%"></span></span><span class="winrate-value">${player.winRate}%</span></span></td>${tierCell}<td><span class="player-actions-wrap"><button class="player-action" data-player-details="${player.name}">Szczegóły</button>${isAdmin ? `<button class="admin-delete" data-delete-player="${player.name}" aria-label="Usuń ${player.name}">Usuń</button>` : ""}</span></td></tr>`;
+        return `<tr><td>${playerCell(player)}</td><td class="games-cell"><strong>${player.games}</strong><small>(${player.wins}W - ${player.games - player.wins}L)</small></td><td class="kda-cell">${player.kills} / ${player.deaths} / ${player.assists}</td><td><span class="kd-pill ${Number(player.kd) < 0.8 ? "low" : Number(player.kd) < 1 ? "neutral" : ""}">${player.kd}</span></td><td class="players-adr">${player.adr.toFixed(1)}</td><td class="winrate-cell"><span class="winrate-wrap"><span class="winrate-bar"><span style="width:${player.winRate}%"></span></span><span class="winrate-value">${player.winRate}%</span></span></td>${tierCell}<td><span class="player-actions-wrap"><button class="player-action" data-player-profile="${player.name}">Profil gracza</button>${isAdmin ? `<button class="admin-delete" data-delete-player="${player.name}" aria-label="Usuń ${player.name}">Usuń</button>` : ""}</span></td></tr>`;
       }).join("") : `<tr><td colspan="${isAdmin ? 8 : 7}"><div class="empty-state">Nie znaleziono zawodnika.</div></td></tr>`;
     }
 
-    function closePlayerDetails() {
-      const modal = document.getElementById("player-modal");
-      modal.hidden = true;
-      modal.innerHTML = "";
+    function renderPlayerProfile(name) {
+      const player = players.find(item => item.name === name);
+      const content = document.getElementById("player-profile-content");
+      if (!player) {
+        content.innerHTML = `<div class="empty-state">Nie znaleziono zawodnika.</div>`;
+        return;
+      }
+      const mapStats = new Map();
+      for (const match of matches) {
+        const side = match.lineups?.a?.includes(name) ? "a" : match.lineups?.b?.includes(name) ? "b" : null;
+        if (!side || !match.stats?.[name]) continue;
+        const map = mapStats.get(match.map) || { games: 0, wins: 0, adrTotal: 0 };
+        map.games++;
+        map.adrTotal += Number(match.stats[name][3] || 0);
+        if ((side === "a" && match.scoreA > match.scoreB) || (side === "b" && match.scoreB > match.scoreA)) map.wins++;
+        mapStats.set(match.map, map);
+      }
+      const mapNames = [...new Set([...availableMaps, ...mapStats.keys()])].sort((a, b) => a.localeCompare(b));
+      const mapCards = mapNames.map(mapName => {
+        const map = mapStats.get(mapName);
+        const winRate = map ? Math.round(map.wins / map.games * 100) : 0;
+        return `<article class="profile-map"><div class="profile-map-head"><span class="profile-map-name">${mapName}</span><strong class="profile-map-rate">${map ? `${winRate}%` : "—"}</strong></div><div class="profile-map-track"><span style="width:${winRate}%"></span></div><div class="profile-map-record"><span>Bilans</span><strong>${map ? `${map.wins}W - ${map.games - map.wins}L` : "Brak meczów"}</strong></div>${map ? `<div class="profile-map-record"><span>Mecze · ADR</span><strong>${map.games} · ${(map.adrTotal / map.games).toFixed(1)}</strong></div>` : ""}</article>`;
+      }).join("");
+      content.innerHTML = `<header class="profile-hero"><div class="profile-identity"><span class="profile-avatar">${initials(player.name)}</span><div><p class="profile-kicker">Profil zawodnika · sezon 2025 / 26</p><h1 class="profile-name">${player.name}</h1><p class="profile-note">${player.games ? `${player.games} rozegranych meczów` : "Brak rozegranych meczów"}</p></div></div><div class="profile-winrate"><div class="profile-ring" style="--profile-rate:${player.winRate}%" role="img" aria-label="Win rate: ${player.winRate}%"><strong>${player.winRate}%</strong></div><span class="profile-winrate-label">Win rate sezonu</span></div></header><div class="profile-stats"><div class="profile-stat"><span>Mecze · W / L</span><strong>${player.games} · ${player.wins} / ${player.games - player.wins}</strong></div><div class="profile-stat profile-stat--rate"><span>Win rate</span><strong>${player.winRate}%</strong></div><div class="profile-stat"><span>K / D / A</span><strong>${player.kills} / ${player.deaths} / ${player.assists}</strong></div><div class="profile-stat profile-stat--kd"><span>K/D ratio</span><strong class="profile-positive">${player.kd}</strong></div><div class="profile-stat"><span>Średni ADR</span><strong class="profile-accent">${player.adr.toFixed(1)}</strong></div><div class="profile-stat profile-stat--kills"><div class="profile-stat-label"><span>Łącznie zabójstw</span><span class="profile-stat-icon" aria-hidden="true">⚔</span></div><strong>${player.kills}</strong></div><div class="profile-stat profile-stat--deaths"><div class="profile-stat-label"><span>Łącznie zgonów</span><span class="profile-stat-icon" aria-hidden="true">☠</span></div><strong>${player.deaths}</strong></div><div class="profile-stat profile-stat--assists"><div class="profile-stat-label"><span>Łącznie asyst</span><span class="profile-stat-icon" aria-hidden="true">✚</span></div><strong>${player.assists}</strong></div></div><div class="profile-section-head"><h2>Win rate na mapach</h2><p>Bilans i średni ADR dla rozegranych map</p></div><div class="profile-map-grid">${mapCards || `<div class="profile-empty">Brak dostępnych map.</div>`}</div>`;
+      const kdaStat = [...content.querySelectorAll(".profile-stat")].find(stat => stat.firstElementChild?.textContent.trim() === "K / D / A");
+      const kdaValue = kdaStat?.querySelector("strong");
+      if (kdaValue) {
+        kdaValue.classList.add("profile-kda-values");
+        kdaValue.replaceChildren();
+        [[player.kills, "profile-kda-kills"], [player.deaths, "profile-kda-deaths"], [player.assists, "profile-kda-assists"]].forEach(([value, className], index) => {
+          if (index) {
+            const separator = document.createElement("span");
+            separator.className = "profile-kda-separator";
+            separator.textContent = "/";
+            kdaValue.append(separator);
+          }
+          const part = document.createElement("span");
+          part.className = className;
+          part.textContent = value;
+          kdaValue.append(part);
+        });
+      }
     }
 
-    function showPlayerDetails(name) {
-      const player = players.find(item => item.name === name);
+    function showPlayerProfile(name) {
+      if (!players.some(player => player.name === name)) return;
+      currentPlayerProfile = name;
+      renderPlayerProfile(name);
+      navigate("player-profile");
+    }
+
+    function directHeadToHead(playerA, playerB) {
+      const record = { matches: 0, winsA: 0, winsB: 0, draws: 0 };
+      for (const match of matches) {
+        const lineups = match.lineups || { a: [], b: [] };
+        const sideA = lineups.a.includes(playerA) ? "a" : lineups.b.includes(playerA) ? "b" : null;
+        const sideB = lineups.a.includes(playerB) ? "a" : lineups.b.includes(playerB) ? "b" : null;
+        if (!sideA || !sideB || sideA === sideB || !match.stats?.[playerA] || !match.stats?.[playerB]) continue;
+        record.matches++;
+        if (match.scoreA === match.scoreB) record.draws++;
+        else if ((sideA === "a" && match.scoreA > match.scoreB) || (sideA === "b" && match.scoreB > match.scoreA)) record.winsA++;
+        else record.winsB++;
+      }
+      return record;
+    }
+
+    function renderPlayerComparison(opponentName) {
+      const player = players.find(item => item.name === currentPlayerProfile);
+      const opponent = players.find(item => item.name === opponentName);
+      const result = document.getElementById("compare-result");
+      if (!player || !opponent || !result) return;
+      const direct = directHeadToHead(player.name, opponent.name);
+      const stats = [
+        ["Rozegrane mecze", player.games, opponent.games, "none"],
+        ["Wygrane", player.wins, opponent.wins, "higher"],
+        ["Win rate", `${player.winRate}%`, `${opponent.winRate}%`, "higher"],
+        ["Zabójstwa", player.kills, opponent.kills, "higher"],
+        ["Zgony", player.deaths, opponent.deaths, "lower"],
+        ["Asysty", player.assists, opponent.assists, "higher"],
+        ["K/D ratio", player.kd, opponent.kd, "higher"],
+        ["Średni ADR", player.adr.toFixed(1), opponent.adr.toFixed(1), "higher"]
+      ];
+      const rows = stats.map(([label, valueA, valueB, better]) => {
+        const scoreA = Number(String(valueA).replace("%", ""));
+        const scoreB = Number(String(valueB).replace("%", ""));
+        const aBetter = better === "higher" ? scoreA > scoreB : better === "lower" && scoreA < scoreB;
+        const bBetter = better === "higher" ? scoreB > scoreA : better === "lower" && scoreB < scoreA;
+        return `<tr><td>${label}</td><td class="compare-a${aBetter ? " is-better" : ""}"${aBetter ? ' aria-label="Lepszy wynik" title="Lepszy wynik"' : ""}>${valueA}</td><td class="compare-b${bBetter ? " is-better" : ""}"${bBetter ? ' aria-label="Lepszy wynik" title="Lepszy wynik"' : ""}>${valueB}</td></tr>`;
+      }).join("");
+      result.innerHTML = `<div class="compare-h2h"><strong class="compare-player">${player.name}</strong><div class="compare-record"><span class="compare-record-label">Bezpośrednie mecze</span><strong class="compare-record-score">${direct.matches ? `${direct.winsA} : ${direct.winsB}` : "—"}</strong><span class="compare-record-note">${direct.matches ? `${direct.matches} meczów${direct.draws ? ` · ${direct.draws} remis` : ""}` : "Brak spotkań po przeciwnych stronach"}</span></div><strong class="compare-player">${opponent.name}</strong></div><div class="compare-table-wrap"><table class="compare-table"><thead><tr><th>Statystyka sezonu</th><th>${player.name}</th><th>${opponent.name}</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    }
+
+    function openPlayerComparison() {
+      const player = players.find(item => item.name === currentPlayerProfile);
+      const opponents = players.filter(item => item.name !== currentPlayerProfile).sort((a, b) => a.name.localeCompare(b.name));
+      const modal = document.getElementById("player-compare-modal");
       if (!player) return;
-      const modal = document.getElementById("player-modal");
-      modal.innerHTML = `<section class="player-modal-card" role="dialog" aria-modal="true" aria-labelledby="player-modal-title"><header class="player-modal-head"><span class="player-modal-avatar">${initials(player.name)}</span><div><h2 class="player-modal-name" id="player-modal-title">${player.name}</h2></div><button class="player-modal-x" data-close-player aria-label="Zamknij szczegóły">×</button></header><div class="player-modal-stats"><div class="player-modal-stat"><span>K/D Ratio</span><strong class="kd-highlight">${player.kd}</strong></div><div class="player-modal-stat"><span>Średni ADR</span><strong class="adr-highlight">${player.adr.toFixed(1)}</strong></div><div class="player-modal-stat"><span>Win rate</span><strong style="color:#ffbd27">${player.winRate}%</strong></div></div><div class="player-modal-list"><div class="player-modal-row"><span>Łącznie zabójstw:</span><strong>${player.kills}</strong></div><div class="player-modal-row"><span>Łącznie zgonów:</span><strong>${player.deaths}</strong></div><div class="player-modal-row"><span>Łącznie asyst:</span><strong>${player.assists}</strong></div><div class="player-modal-row"><span>Rozegrane mecze:</span><strong>${player.games}</strong></div><div class="player-modal-row"><span>Wygrane / przegrane:</span><strong>${player.wins} wygranych / ${player.games - player.wins} przegranych</strong></div></div><footer class="player-modal-footer"><button class="archive-action" data-close-player>Zamknij</button></footer></section>`;
+      if (!opponents.length) {
+        modal.innerHTML = `<section class="admin-modal-card compare-card" role="dialog" aria-modal="true" aria-labelledby="compare-title"><header class="admin-modal-head"><div><h2 id="compare-title">Head-to-head</h2></div><button class="admin-modal-close" data-close-player-compare aria-label="Zamknij">×</button></header><div class="compare-result"><div class="compare-empty">Dodaj drugiego zawodnika, aby móc porównać statystyki.</div></div></section>`;
+        modal.hidden = false;
+        modal.querySelector("[data-close-player-compare]").focus();
+        return;
+      }
+      const initialOpponent = opponents[0];
+      modal.innerHTML = `<section class="admin-modal-card compare-card" role="dialog" aria-modal="true" aria-labelledby="compare-title"><header class="admin-modal-head"><div><h2 id="compare-title">Head-to-head</h2><p>Porównanie statystyk sezonu i bezpośrednich spotkań.</p></div><button class="admin-modal-close" data-close-player-compare aria-label="Zamknij">×</button></header><div class="compare-picker"><label class="admin-field" for="compare-opponent">Wybierz przeciwnika<select class="compare-select" id="compare-opponent">${opponents.map(opponent => `<option value="${opponent.name}" ${opponent.name === initialOpponent.name ? "selected" : ""}>${opponent.name}</option>`).join("")}</select></label></div><div class="compare-result" id="compare-result"></div><footer class="scoreboard-footer"><button class="archive-action" data-close-player-compare>Zamknij</button></footer></section>`;
       modal.hidden = false;
-      modal.querySelector("[data-close-player]").focus();
+      renderPlayerComparison(initialOpponent.name);
+      modal.querySelector("#compare-opponent").focus();
+    }
+
+    function closePlayerComparison() {
+      const modal = document.getElementById("player-compare-modal");
+      modal.hidden = true;
+      modal.innerHTML = "";
     }
 
     function renderRanking() {
@@ -1165,6 +1346,10 @@
       calculateStats();
       renderOverview();
       renderPlayers(document.getElementById("player-search").value);
+      if (currentPlayerProfile) {
+        if (players.some(player => player.name === currentPlayerProfile)) renderPlayerProfile(currentPlayerProfile);
+        else navigate("players");
+      }
       renderRanking();
       renderDraft();
       renderSigmaRanking();
@@ -1363,9 +1548,10 @@
     }
 
     function navigate(page) {
+      if (page !== "player-profile") currentPlayerProfile = null;
       document.querySelectorAll(".page").forEach(section => section.hidden = section.id !== `${page}-page`);
       document.querySelectorAll(".nav button").forEach(button => {
-        const active = button.dataset.page === page;
+        const active = button.dataset.page === page || (page === "player-profile" && button.dataset.page === "players");
         button.classList.toggle("active", active);
         if (active) button.setAttribute("aria-current", "page"); else button.removeAttribute("aria-current");
       });
@@ -1429,10 +1615,11 @@
         if (match && isAdmin) renderMatchForm(match);
       }
       if (event.target.id === "scoreboard-modal") closeScoreboard();
-      const playerDetailsButton = event.target.closest("[data-player-details]");
-      if (playerDetailsButton) showPlayerDetails(playerDetailsButton.dataset.playerDetails);
-      if (event.target.closest("[data-close-player]")) closePlayerDetails();
-      if (event.target.id === "player-modal") closePlayerDetails();
+      const playerProfileButton = event.target.closest("[data-player-profile]");
+      if (playerProfileButton) showPlayerProfile(playerProfileButton.dataset.playerProfile);
+      if (event.target.closest("[data-profile-back]")) navigate("players");
+      if (event.target.closest("[data-player-compare]")) openPlayerComparison();
+      if (event.target.closest("[data-close-player-compare]") || event.target.id === "player-compare-modal") closePlayerComparison();
       if (event.target.closest("#random-match")) {
         const randomMatch = matches[Math.floor(Math.random() * matches.length)];
         showMatch(randomMatch.id);
@@ -1448,7 +1635,7 @@
     document.addEventListener("keydown", event => {
       if (event.key === "Escape") {
         closeScoreboard();
-        closePlayerDetails();
+        closePlayerComparison();
         closeAdminModal();
       }
     });
@@ -1457,6 +1644,8 @@
       if (mapSelect && mapSelect.value !== "__add_map__") mapSelect.dataset.currentMap = mapSelect.value;
     });
     document.addEventListener("change", async event => {
+      const compareSelect = event.target.closest("#compare-opponent");
+      if (compareSelect) renderPlayerComparison(compareSelect.value);
       const tierSelect = event.target.closest("[data-player-tier]");
       if (tierSelect) {
         const name = tierSelect.dataset.playerTier;
